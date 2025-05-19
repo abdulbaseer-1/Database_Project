@@ -1,0 +1,45 @@
+# Node modules
+node_modules/
+**/node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output
+dist/
+build/
+
+# dotenv environment files
+.env
+.env.*.local
+
+# IDE and OS-specific files
+.DS_Store
+Thumbs.db
+
+# Logs and temp
+*.log
+tmp/
+temp/
+
+# Coverage reports
+coverage/
+
+# Next.js
+.next/
+
+# Vite
+.vite/
+
+# Optional: Ignore MongoDB data dumps
+dump/
+
+# Optional: Ignore SQLite
+*.sqlite
+*.sqlite3
+
+# Optional: Ignore uploads
+uploads/
+public/uploads/

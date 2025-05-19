@@ -1,0 +1,73 @@
+.navbar {
+    display: flex;
+    gap: 8px;
+    padding: 6px;
+  }
+  
+  .navbar a {
+    color: rgba(255, 255, 255, 0.95);
+    text-decoration: none;
+    padding: 12px 28px;
+    font-size: 1.5vw;
+    font-weight: 500;
+    letter-spacing: 0.6px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    position: relative;
+  }
+  
+  .navbar a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    border-radius: 20px;
+  }
+  
+  .navbar a:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+  }
+  
+  .navbar a:hover::before {
+    transform: translateY(0);
+  }
+  
+  @media (max-width: 768px) {
+    .navbar {
+      align-items: center;
+      gap: 0px;
+      padding: 4px;
+    }
+  
+    .navbar a {
+      width: 100%;
+      text-align: center;
+      padding: 2% 1%;
+      font-size: 3vw;
+  
+    }
+  }
+  /* Add these to your navbar styles */
+  .navbar {
+    display: flex;
+    gap: inherit; /* Inherits gap from navbarContainer */
+    align-items: center;
+    color: white;
+    font-size: 16px;
+  }
+  
+  @media screen and (max-width: 480px) {
+    .navbar {
+      font-size: 14px;
+    }
+    .navbar a {
+      font-size: 4vw;
+    }
+  }

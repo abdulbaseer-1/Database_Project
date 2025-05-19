@@ -1,0 +1,98 @@
+.header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  height: 80px;
+  padding: 0 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin: 0;
+}
+
+/* Banner as background */
+.header > img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  opacity: 0.9;
+  filter: brightness(0.9);
+}
+
+/* Logo styling */
+.logo {
+  display: flex;
+  align-items: center;
+  z-index: 1;
+}
+
+.logoImage {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.logoImage:hover {
+  transform: scale(1.05);
+}
+
+/* Navbar container - centered */
+.navbarContainer {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  z-index: 1;
+}
+
+/* Profile icon/cart styling */
+.cart {
+  display: flex;
+  align-items: center;
+  z-index: 1;
+}
+
+.Profile_icon {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.Profile_icon:hover {
+  transform: scale(1.05);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .header {
+    padding: 0 16px;
+    height: 70px;
+  }
+  
+  .logoImage {
+    height: 40px;
+    width: 40px;
+  }
+  
+  .Profile_icon {
+    height: 35px;
+    width: 35px;
+  }
+}

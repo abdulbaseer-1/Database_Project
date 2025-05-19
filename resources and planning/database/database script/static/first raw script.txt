@@ -1,0 +1,73 @@
+CREATE DATABASE bus_management_system;
+
+use bus_management_system;
+
+CREATE TABLE users (
+  id            INT         UNSIGNED NOT NULL AUTO_INCREMENT,
+  name          VARCHAR(100)            NOT NULL,
+  email         VARCHAR(255)            NOT NULL UNIQUE,
+  password_hash VARCHAR(255)            NOT NULL,
+  role          ENUM('admin','user')    NOT NULL DEFAULT 'user',
+  PRIMARY KEY (id)
+);
+
+-- 2. Buses
+CREATE TABLE buses (
+  id           INT         UNSIGNED NOT NULL AUTO_INCREMENT,
+  bus_name     VARCHAR(100)            NOT NULL,
+  bus_number   VARCHAR(50)             NOT NULL UNIQUE,
+  image_url    VARCHAR(2083)           NULL,
+  total_seats  INT         UNSIGNED NOT NULL,
+  PRIMARY KEY (id)
+);
+
+-- 3. Routes
+CREATE TABLE routes (
+  id             INT         UNSIGNED NOT NULL AUTO_INCREMENT,
+  _source         VARCHAR(100)            NOT NULL,
+  destination    VARCHAR(100)            NOT NULL,
+  departure_time DATETIME               NOT NULL,
+  arrival_time   DATETIME               NOT NULL,
+  bus_id         INT         UNSIGNED NOT NULL,
+  PRIMARY KEY (id),
+  INDEX idx_routes_bus (bus_id),
+  FOREIGN KEY (bus_id)
+    REFERENCES buses(id)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+);
+
+-- 4. Bookings
+CREATE TABLE bookings (
+  id           INT         UNSIGNED NOT NULL AUTO_INCREMENT,
+  user_id      INT         UNSIGNED NOT NULL,
+  route_id     INT         UNSIGNED NOT NULL,
+  seat_number  INT         UNSIGNED NOT NULL,
+  status       ENUM('booked','cancelled') NOT NULL DEFAULT 'booked',
+  PRIMARY KEY (id),
+  INDEX idx_bookings_user  (user_id),
+  INDEX idx_bookings_route (route_id),
+  FOREIGN KEY (user_id)
+    REFERENCES users(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  FOREIGN KEY (route_id)
+    REFERENCES routes(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
+
+-- 5. BusLocations (for live tracking)
+CREATE TABLE bus_locations (
+  id         INT            UNSIGNED NOT NULL AUTO_INCREMENT,
+  bus_id     INT            UNSIGNED NOT NULL,
+  latitude   DECIMAL(9,6)              NOT NULL,
+  longitude  DECIMAL(9,6)              NOT NULL,
+  ts         TIMESTAMP                NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  INDEX idx_locations_bus (bus_id),
+  FOREIGN KEY (bus_id)
+    REFERENCES buses(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
