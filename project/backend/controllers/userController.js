@@ -1,11 +1,13 @@
 const { User } = require('../models');
+const pool = require('../config/db');
 
 module.exports = {
   getProfile: async (req, res, next) => {
     try {
-      const user = await User.findByPk(req.user.id, {
-        attributes: ['id', 'name', 'email', 'role']
-      });
+      // const user = await User.findByPk(req.user.id, {
+      //   attributes: ['id', 'name', 'email', 'role']
+      // });
+      const user = pool.query('SELECT id, name, email, role FROM users WHERE id = $1', [req.user.id]);
       if (!user) return res.status(404).json({ message: 'User not found' });
       res.json(user);
     } catch (err) {
@@ -17,6 +19,7 @@ module.exports = {
     try {
       const { name, email } = req.body;
       const user = await User.findByPk(req.user.id);
+      const user = pool.query('SELECT * FROM users WHERE id = $1', [req.user.id]);
       if (!user) return res.status(404).json({ message: 'User not found' });
 
       user.name = name || user.name;
