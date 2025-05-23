@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { User } = require('../models');
+const pool = require('../middleware/db');
 
 const TOKEN_OPTIONS = {
   httpOnly: true,
@@ -13,13 +13,13 @@ module.exports = {
   register: async (req, res, next) => {
     try {
       const { name, email, password, role } = req.body;
-      const existingUser = await User.findOne({ where: { email } });
+      const existingUser = await pool.query('SELECT * FROM users WHERE email=?',[email]);
       if (existingUser) {
         return res.status(409).json({ message: 'Email already registered' });
       }
 
       const hash = await bcrypt.hash(password, 10);
-      const user = await User.create({ name, email, password: hash, role });
+      const user = await pool.query('INSERT INTO users(name, email, password, role) VALUES(?, ?, ?, ?)',[name, email, password, role]);
 
       res.status(201).json({ id: user.id, name: user.name, email: user.email });
     } catch (err) {
@@ -30,8 +30,9 @@ module.exports = {
   login: async (req, res, next) => {
     try {
       const { email, password } = req.body;
-      const user = await User.findOne({ where: { email } });
-      if (!user || !(await bcrypt.compare(password, user.password))) {
+      const user = await pool.query('SELECT * FROM users WHERE email=?',[email]);
+      const user_password = await pool.query('SELECT * FROM users WHERE email=? PROJECT password',[email]);
+      if (!user || !(await bcrypt.compare(password, user_password))) {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
 

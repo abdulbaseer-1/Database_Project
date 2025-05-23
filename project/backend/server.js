@@ -6,7 +6,6 @@ const cookieParser  = require('cookie-parser');
 const cors          = require('cors');
 const helmet        = require('helmet');
 const morgan        = require('morgan');
-const { sequelize } = require('./models');
 
 // import your route modules
 const authRoutes     = require('./routes/authRoutes');

@@ -5,6 +5,7 @@ const authenticateJWT = require('../middleware/authenticateJWT');
 const authorizeRoles = require('../middleware/authorizeRoles');
 
 router.get('/', busController.getAllBuses);
+router.get('/:location', busController.getBusCustom);
 router.get('/:id', busController.getBusById);
 
 router.post('/', authenticateJWT, authorizeRoles('admin'), busController.createBus);

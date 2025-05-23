@@ -1,19 +1,16 @@
 const { Booking } = require('../models'); // Make sure you have a Booking model
+const pool = require('../database/db')
 
 module.exports = {
   // POST /api/bookings/
   createBooking: async (req, res, next) => {
     try {
-      const { date, serviceId } = req.body;
+      const { date, seat_number, route, } = req.body;
       if (!date || !serviceId) {
         return res.status(400).json({ message: 'Date and serviceId are required' });
       }
 
-      const booking = await Booking.create({
-        userId: req.user.id,
-        serviceId,
-        date,
-      });
+      const booking = await pool.query('INSERT INTO bookings(id, user_id,route_id, seat_number, date)'["what here ?" , req.body.user.userId, route.route_id, seat_number, date]);
 
       res.status(201).json({ message: 'Booking created', booking });
     } catch (err) {

@@ -1,11 +1,19 @@
-// controllers/busController.js
-const { Bus } = require('../models');
+const pool = require('../middleware/db');
 
 module.exports = {
   getAllBuses: async (req, res, next) => {
     try {
-      const buses = await Bus.findAll();
+      const [buses] = await pool.query('SELECT * FROM buses');
       res.json(buses);
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  getBusCustom: async(req, res, next) => {
+    try {
+      const {departure_time, _source, destination} = req.body;
+      const[buses] = await pool.query('SELECT * FROM routes WHERE departure_time = ? AND _source = ? AND destination = ?',[departure_time, _source, destination])
     } catch (err) {
       next(err);
     }
@@ -13,9 +21,9 @@ module.exports = {
 
   getBusById: async (req, res, next) => {
     try {
-      const bus = await Bus.findByPk(req.params.id);
-      if (!bus) return res.status(404).json({ message: 'Bus not found' });
-      res.json(bus);
+      const [rows] = await pool.query('SELECT * FROM buses WHERE id = ?', [req.params.id]);
+      if (rows.length === 0) return res.status(404).json({ message: 'Bus not found' });
+      res.json(rows[0]);
     } catch (err) {
       next(err);
     }
@@ -24,8 +32,11 @@ module.exports = {
   createBus: async (req, res, next) => {
     try {
       const { bus_name, bus_number, image_url, total_seats } = req.body;
-      const bus = await Bus.create({ bus_name, bus_number, image_url, total_seats });
-      res.status(201).json(bus);
+      const [result] = await pool.query(
+        'INSERT INTO buses (bus_name, bus_number, image_url, total_seats) VALUES (?, ?, ?, ?)',
+        [bus_name, bus_number, image_url, total_seats]
+      );
+      res.status(201).json({ id: result.insertId, bus_name, bus_number, image_url, total_seats });
     } catch (err) {
       next(err);
     }
@@ -34,11 +45,11 @@ module.exports = {
   updateBus: async (req, res, next) => {
     try {
       const { bus_name, bus_number, image_url, total_seats } = req.body;
-      const [updated] = await Bus.update(
-        { bus_name, bus_number, image_url, total_seats },
-        { where: { id: req.params.id } }
+      const [result] = await pool.query(
+        'UPDATE buses SET bus_name = ?, bus_number = ?, image_url = ?, total_seats = ? WHERE id = ?',
+        [bus_name, bus_number, image_url, total_seats, req.params.id]
       );
-      if (!updated) return res.status(404).json({ message: 'Bus not found' });
+      if (result.affectedRows === 0) return res.status(404).json({ message: 'Bus not found' });
       res.json({ message: 'Bus updated' });
     } catch (err) {
       next(err);
@@ -47,8 +58,8 @@ module.exports = {
 
   deleteBus: async (req, res, next) => {
     try {
-      const deleted = await Bus.destroy({ where: { id: req.params.id } });
-      if (!deleted) return res.status(404).json({ message: 'Bus not found' });
+      const [result] = await pool.query('DELETE FROM buses WHERE id = ?', [req.params.id]);
+      if (result.affectedRows === 0) return res.status(404).json({ message: 'Bus not found' });
       res.json({ message: 'Bus deleted' });
     } catch (err) {
       next(err);
