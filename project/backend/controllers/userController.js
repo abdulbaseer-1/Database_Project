@@ -1,18 +1,18 @@
 // import User from "../Models/User.model.js";
 import bcrypt, {compare} from 'bcrypt';
-import getIdFromJWT from "./getIdFromJWT.js";
+import getIdFromJWT from "../middleware/getIdFromJWT.js";
 import jwt from 'jsonwebtoken';
 import { fileURLToPath } from 'url';
 import path, { dirname } from 'path';
 import dotenv from 'dotenv';
-import pool from '../config/db.js'; // Assuming you have a db.js file for database connection
+import pool from '../database/db.js'; // Assuming you have a db.js file for database connection
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Load environment variables from .env file    
 
-dotenv.config({ path: path.join(__dirname, "../../config/.env") });
+dotenv.config({ path: path.join(__dirname, "../config/.env") });
 
 
 const createUser = async (req, res) => {
@@ -31,20 +31,6 @@ const insertResult = await pool.query(
         res.status(500).json({ message: error.message });
     }
 };
-//         const user = await User.create({
-//             username: req.body.username,
-//             email: req.body.email,
-//             password: hashedPassword,
-//         });
-
-//         res.status(201).json({message: "user created", user});
-        
-//     }catch (error) {
-//         console.error("Error occurred while creating user: ", error); 
-//         res.status(500).json({message: error.message});
-//     }
-// };
-
 const deleteUser = async (req, res) => {
         const id = getIdFromJWT(req);
         // const user = await User.findById(id);
@@ -107,4 +93,27 @@ const logoutUser = (req, res) => { // this is so easy, sessions were relly tires
     res.status(200).json({ message: 'Logged out successfully' });
 };
 
-export default { createUser, deleteUser, loginUser, logoutUser };
+const getProfile = async (req, res) => {
+    try {
+        const userId = req.user.id; // Assuming JWT middleware adds `req.user`
+        // Fetch the user profile based on the user ID
+        const userProfile = await db.query('SELECT * FROM users WHERE id = ?', [userId]);
+        res.json(userProfile[0]);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching user profile', error });
+    }
+};
+
+const updateProfile = async (req, res) => {
+    try {
+        const userId = req.user.id; // Assuming JWT middleware adds `req.user`
+        const { name, email } = req.body; // Assuming only name and email are updatable
+        await db.query('UPDATE users SET name = ?, email = ? WHERE id = ?', [name, email, userId]);
+        res.json({ message: 'Profile updated successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating user profile', error });
+    }
+};
+
+
+export default { createUser, deleteUser, loginUser, logoutUser,getProfile,updateProfile, };
