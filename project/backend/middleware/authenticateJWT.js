@@ -1,5 +1,5 @@
 // middleware/authenticateJWT.js
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
 function authenticateJWT(req, res, next) {
   // 1. Grab token from Authorization header or cookie
@@ -34,4 +34,4 @@ function authenticateJWT(req, res, next) {
   });
 }
 
-module.exports = authenticateJWT;
+export default authenticateJWT;

@@ -1,103 +1,81 @@
-// server.js
-require('dotenv').config({path:"./config/"});
-const express       = require('express');
-const path          = require('path');
-const cookieParser  = require('cookie-parser');
-const cors          = require('cors');
-const helmet        = require('helmet');
-const morgan        = require('morgan');
+import dotenv from 'dotenv';
+dotenv.config({ path: "./config/" });
 
-// import your route modules
-const authRoutes     = require('./routes/authRoutes');
-const userRoutes     = require('./routes/userRoutes');
-const adminRoutes    = require('./routes/adminRoutes');
-const busRoutes      = require('./routes/busRoutes');
-const routeRoutes    = require('./routes/routeRoutes');
-const bookingRoutes  = require('./routes/bookingRoutes');
-const locationRoutes = require('./routes/locationRoutes');
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import cors from './middleware/CORS.js';
 
+import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
+import busRoutes from './routes/busRoutes.js';
+import routeRoutes from './routes/routeRoutes.js';
+import bookingRoutes from './routes/bookingRoutes.js';
+import logger from './middleware/logger.js';
+
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+// Define __filename and __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// —— Middleware ——
-// parse JSON bodies
+// Middleware
+app.use(cors);
 app.use(express.json());
-// parse URL-encoded bodies (for form submissions)
 app.use(express.urlencoded({ extended: true }));
-// parse cookies
 app.use(cookieParser());
-// secure headers
-app.use(helmet());
-// enable CORS for your front-end
-app.use(cors({
-  origin: process.env.FRONTEND_URL,
-  credentials: true,
-}));
-// HTTP request logging in dev
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
-}
+app.use(logger);
 
-// —— Static file serving ——
-// serve uploaded bus images from /uploads
+// Static Files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// —— Routes ——
-// Auth & user
-app.use('/api/auth',  authRoutes);
+// Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/buses', busRoutes);
+app.use('/api/routes', routeRoutes);
+app.use('/api/bookings', bookingRoutes);
 
-// Core resources
-app.use('/api/buses',     busRoutes);
-app.use('/api/routes',    routeRoutes);
-app.use('/api/bookings',  bookingRoutes);
-app.use('/api/locations', locationRoutes);
-
-// Global error handler
-app.use(require('./middleware/errorHandler'));
-
-app.use(/.*/, (req, res) => { // Regular expression for all paths
-  res.status(404).send('Page not found');
+// 404 Handling
+app.use(/.*/, (req, res) => {
+    res.status(404).json({ error: 'Page not found' });
 });
 
+// Error Handling Middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+});
 
+// Start the Server
 const PORT = process.env.PORT || 5000;
+const server = app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+});
 
-// —— Database sync & server start ——
-// in dev, keep your tables in sync without dropping data
-const syncOptions = { force: false };
-if (process.env.NODE_ENV === 'development') {
-  syncOptions.alter = true;
-}
-
-sequelize
-  .sync(syncOptions)
-  .then(() => {
-    const server = app.listen(PORT, () =>
-      console.log(`🚀 Server running on http://localhost:${PORT} (${process.env.NODE_ENV})`)
-    );
-
-    // Graceful shutdown
-    const shutDown = () => {
-      console.log('📴 Shutting down gracefully...');
-      server.close(() => {
-        console.log('– Closed HTTP server');
-        sequelize.close().then(() => {
-          console.log('– Closed DB connection');
-          process.exit(0);
-        });
-      });
-      setTimeout(() => {
+// Graceful Shutdown
+const shutDown = async () => {
+    console.log('📴 Shutting down gracefully...');
+    try {
+        // Close any resources like database connections here
+        console.log('✅ Closed resources');
+    } catch (err) {
+        console.error('❌ Error during shutdown:', err);
+    }
+    server.close(() => {
+        console.log('✅ Closed HTTP server');
+        process.exit(0);
+    });
+    setTimeout(() => {
         console.error('❌ Forcefully shutting down');
         process.exit(1);
-      }, 10000);
-    };
+    }, 10000);
+};
 
-    process.on('SIGTERM', shutDown);
-    process.on('SIGINT',  shutDown);
-  })
-  .catch(err => {
-    console.error('❌ Failed to sync database:', err);
-    process.exit(1);
-  });
+process.on('SIGTERM', shutDown);
+process.on('SIGINT', shutDown);

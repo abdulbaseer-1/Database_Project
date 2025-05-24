@@ -1,9 +1,11 @@
-const express = require('express');
-const router = express.Router();
-const userController = require('../controllers/userController');
-const authenticateJWT = require('../middleware/authenticateJWT');
+import { Router } from 'express';
+
+const router = Router();
+
+import userController from '../controllers/userController.js';
+import authenticateJWT from'../middleware/authenticateJWT.js';
 
 router.get('/me', authenticateJWT, userController.getProfile);
 router.put('/me', authenticateJWT, userController.updateProfile);
 
-module.exports = router;
+export default router;

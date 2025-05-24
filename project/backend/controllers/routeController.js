@@ -1,10 +1,13 @@
-// controllers/routeController.js
-const { Route, Bus } = require('../models');
+import pool from '../database/db.js';
 
-module.exports = {
+export default {
   getAllRoutes: async (req, res, next) => {
     try {
-      const routes = await Route.findAll({ include: { model: Bus, as: 'bus' } });
+      const [routes] = await pool.query(`
+        SELECT r.*, b.bus_name, b.bus_number 
+        FROM routes AS r 
+        LEFT JOIN buses AS b ON r.bus_id = b.id
+      `);
       res.json(routes);
     } catch (err) {
       next(err);
@@ -13,9 +16,16 @@ module.exports = {
 
   getRouteById: async (req, res, next) => {
     try {
-      const route = await Route.findByPk(req.params.id, { include: { model: Bus, as: 'bus' } });
-      if (!route) return res.status(404).json({ message: 'Route not found' });
-      res.json(route);
+      const [route] = await pool.query(`
+        SELECT r.*, b.bus_name, b.bus_number 
+        FROM routes AS r 
+        LEFT JOIN buses AS b ON r.bus_id = b.id 
+        WHERE r.id = ?
+      `, [req.params.id]);
+
+      if (route.length === 0) return res.status(404).json({ message: 'Route not found' });
+
+      res.json(route[0]);
     } catch (err) {
       next(err);
     }
@@ -24,8 +34,20 @@ module.exports = {
   createRoute: async (req, res, next) => {
     try {
       const { source, destination, departure_time, arrival_time, bus_id } = req.body;
-      const route = await Route.create({ source, destination, departure_time, arrival_time, bus_id });
-      res.status(201).json(route);
+
+      const [result] = await pool.query(`
+        INSERT INTO routes (source, destination, departure_time, arrival_time, bus_id) 
+        VALUES (?, ?, ?, ?, ?)
+      `, [source, destination, departure_time, arrival_time, bus_id]);
+
+      res.status(201).json({
+        id: result.insertId,
+        source,
+        destination,
+        departure_time,
+        arrival_time,
+        bus_id,
+      });
     } catch (err) {
       next(err);
     }
@@ -34,11 +56,15 @@ module.exports = {
   updateRoute: async (req, res, next) => {
     try {
       const { source, destination, departure_time, arrival_time, bus_id } = req.body;
-      const [updated] = await Route.update(
-        { source, destination, departure_time, arrival_time, bus_id },
-        { where: { id: req.params.id } }
-      );
-      if (!updated) return res.status(404).json({ message: 'Route not found' });
+
+      const [result] = await pool.query(`
+        UPDATE routes 
+        SET source = ?, destination = ?, departure_time = ?, arrival_time = ?, bus_id = ? 
+        WHERE id = ?
+      `, [source, destination, departure_time, arrival_time, bus_id, req.params.id]);
+
+      if (result.affectedRows === 0) return res.status(404).json({ message: 'Route not found' });
+
       res.json({ message: 'Route updated' });
     } catch (err) {
       next(err);
@@ -47,11 +73,13 @@ module.exports = {
 
   deleteRoute: async (req, res, next) => {
     try {
-      const deleted = await Route.destroy({ where: { id: req.params.id } });
-      if (!deleted) return res.status(404).json({ message: 'Route not found' });
+      const [result] = await pool.query('DELETE FROM routes WHERE id = ?', [req.params.id]);
+
+      if (result.affectedRows === 0) return res.status(404).json({ message: 'Route not found' });
+
       res.json({ message: 'Route deleted' });
     } catch (err) {
       next(err);
     }
-  }
+  },
 };

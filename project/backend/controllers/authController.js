@@ -1,6 +1,6 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const pool = require('../middleware/db');
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import pool from '../database/db.js';
 
 const TOKEN_OPTIONS = {
   httpOnly: true,
@@ -9,20 +9,34 @@ const TOKEN_OPTIONS = {
   maxAge: 1000 * 60 * 60 * 24, // 1 day
 };
 
-module.exports = {
+export default {
   register: async (req, res, next) => {
     try {
       const { name, email, password, role } = req.body;
-      const existingUser = await pool.query('SELECT * FROM users WHERE email=?',[email]);
-      if (existingUser) {
+
+      // Check if the user already exists
+      const [existingUser] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
+      if (existingUser.length > 0) {
         return res.status(409).json({ message: 'Email already registered' });
       }
 
+      // Hash the password
       const hash = await bcrypt.hash(password, 10);
-      const user = await pool.query('INSERT INTO users(name, email, password, role) VALUES(?, ?, ?, ?)',[name, email, password, role]);
 
-      res.status(201).json({ id: user.id, name: user.name, email: user.email });
+      // Insert the user into the database
+      const [result] = await pool.query(
+        'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
+        [name, email, hash, role]
+      );
+
+      res.status(201).json({
+        id: result.insertId,
+        name,
+        email,
+        role,
+      });
     } catch (err) {
+      console.error('Error registering user:', err);
       next(err);
     }
   },
@@ -30,25 +44,38 @@ module.exports = {
   login: async (req, res, next) => {
     try {
       const { email, password } = req.body;
-      const user = await pool.query('SELECT * FROM users WHERE email=?',[email]);
-      const user_password = await pool.query('SELECT * FROM users WHERE email=? PROJECT password',[email]);
-      if (!user || !(await bcrypt.compare(password, user_password))) {
+
+      // Fetch user details by email
+      const [users] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
+      if (users.length === 0) {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
 
+      const user = users[0];
+
+      // Compare the provided password with the hashed password
+      const isPasswordMatch = await bcrypt.compare(password, user.password);
+      if (!isPasswordMatch) {
+        return res.status(401).json({ message: 'Invalid credentials' });
+      }
+
+      // Generate a JWT token
       const payload = { id: user.id, role: user.role };
       const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
 
-      res.cookie('token', token, TOKEN_OPTIONS).json({
-        message: 'Logged in successfully',
-        user: { id: user.id, name: user.name, role: user.role },
-      });
+      res
+        .cookie('token', token, TOKEN_OPTIONS)
+        .json({
+          message: 'Logged in successfully',
+          user: { id: user.id, name: user.name, role: user.role },
+        });
     } catch (err) {
+      console.error('Error logging in:', err);
       next(err);
     }
   },
 
   logout: (req, res) => {
     res.clearCookie('token', TOKEN_OPTIONS).json({ message: 'Logged out' });
-  }
+  },
 };

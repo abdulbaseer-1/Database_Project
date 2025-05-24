@@ -1,8 +1,10 @@
-const express = require('express');
-const router = express.Router();
-const routeController = require('../controllers/routeController');
-const authenticateJWT = require('../middleware/authenticateJWT');
-const authorizeRoles = require('../middleware/authorizeRoles');
+import { Router } from 'express';
+
+const router = Router();
+
+import routeController from '../controllers/routeController.js';
+import authenticateJWT from '../middleware/authenticateJWT.js';
+import authorizeRoles from '../middleware/authorizeRoles.js';
 
 router.get('/', routeController.getAllRoutes);
 router.get('/:id', routeController.getRouteById);
@@ -11,4 +13,4 @@ router.post('/', authenticateJWT, authorizeRoles('admin'), routeController.creat
 router.put('/:id', authenticateJWT, authorizeRoles('admin'), routeController.updateRoute);
 router.delete('/:id', authenticateJWT, authorizeRoles('admin'), routeController.deleteRoute);
 
-module.exports = router;
+export default router;

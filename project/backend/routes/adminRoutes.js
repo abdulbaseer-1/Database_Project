@@ -1,10 +1,12 @@
-const express = require('express');
-const router = express.Router();
-const adminController = require('../controllers/adminController');
-const authenticateJWT = require('../middleware/authenticateJWT');
-const authorizeRoles = require('../middleware/authorizeRoles');
+import { Router } from 'express';
+
+const router = Router();
+
+import adminController from '../controllers/adminController.js';
+import authenticateJWT from '../middleware/authenticateJWT.js';
+import authorizeRoles from '../middleware/authorizeRoles.js';
 
 // Admin-only dashboard or analytics, for example
 router.get('/dashboard', authenticateJWT, authorizeRoles('admin'), adminController.dashboard);
 
-module.exports = router;
+export default router;

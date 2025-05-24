@@ -1,8 +1,9 @@
-const express = require('express');
-const router = express.Router();
-const busController = require('../controllers/busController');
-const authenticateJWT = require('../middleware/authenticateJWT');
-const authorizeRoles = require('../middleware/authorizeRoles');
+import { Router } from 'express';
+
+const router = Router();
+import busController from '../controllers/busController.js';
+import authenticateJWT from '../middleware/authenticateJWT.js';
+import authorizeRoles from '../middleware/authorizeRoles.js';
 
 router.get('/', busController.getAllBuses);
 router.get('/:location', busController.getBusCustom);
@@ -12,4 +13,4 @@ router.post('/', authenticateJWT, authorizeRoles('admin'), busController.createB
 router.put('/:id', authenticateJWT, authorizeRoles('admin'), busController.updateBus);
 router.delete('/:id', authenticateJWT, authorizeRoles('admin'), busController.deleteBus);
 
-module.exports = router;
+export default router;

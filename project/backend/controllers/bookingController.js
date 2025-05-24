@@ -1,18 +1,25 @@
-const { Booking } = require('../models'); // Make sure you have a Booking model
-const pool = require('../database/db')
+import pool from '../database/db.js';
 
-module.exports = {
+export default {
   // POST /api/bookings/
   createBooking: async (req, res, next) => {
     try {
-      const { date, seat_number, route, } = req.body;
-      if (!date || !serviceId) {
-        return res.status(400).json({ message: 'Date and serviceId are required' });
+      const { date, seat_number, route_id } = req.body;
+      const userId = req.user.userId; // Assuming user ID is stored in req.user
+
+      if (!date || !route_id) {
+        return res.status(400).json({ message: 'Date and route_id are required' });
       }
 
-      const booking = await pool.query('INSERT INTO bookings(id, user_id,route_id, seat_number, date)'["what here ?" , req.body.user.userId, route.route_id, seat_number, date]);
+      const [result] = await pool.query(
+        `INSERT INTO bookings (user_id, route_id, seat_number, date) VALUES (?, ?, ?, ?)`,
+        [userId, route_id, seat_number, date]
+      );
 
-      res.status(201).json({ message: 'Booking created', booking });
+      res.status(201).json({
+        message: 'Booking created',
+        booking: { id: result.insertId, user_id: userId, route_id, seat_number, date },
+      });
     } catch (err) {
       console.error('Error creating booking:', err);
       next(err);
@@ -22,10 +29,12 @@ module.exports = {
   // GET /api/bookings/my
   getMyBookings: async (req, res, next) => {
     try {
-      const bookings = await Booking.findAll({
-        where: { userId: req.user.id },
-        order: [['date', 'DESC']],
-      });
+      const userId = req.user.userId; // Assuming user ID is stored in req.user
+
+      const [bookings] = await pool.query(
+        `SELECT * FROM bookings WHERE user_id = ? ORDER BY date DESC`,
+        [userId]
+      );
 
       res.json({ bookings });
     } catch (err) {
@@ -37,18 +46,20 @@ module.exports = {
   // DELETE /api/bookings/:id
   cancelBooking: async (req, res, next) => {
     try {
-      const booking = await Booking.findOne({
-        where: {
-          id: req.params.id,
-          userId: req.user.id,
-        },
-      });
+      const bookingId = req.params.id;
+      const userId = req.user.userId; // Assuming user ID is stored in req.user
 
-      if (!booking) {
+      const [booking] = await pool.query(
+        `SELECT * FROM bookings WHERE id = ? AND user_id = ?`,
+        [bookingId, userId]
+      );
+
+      if (booking.length === 0) {
         return res.status(404).json({ message: 'Booking not found' });
       }
 
-      await booking.destroy();
+      await pool.query(`DELETE FROM bookings WHERE id = ? AND user_id = ?`, [bookingId, userId]);
+
       res.json({ message: 'Booking cancelled' });
     } catch (err) {
       console.error('Error cancelling booking:', err);
