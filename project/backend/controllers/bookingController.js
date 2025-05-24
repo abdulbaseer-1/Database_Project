@@ -29,12 +29,12 @@ export default {
   // GET /api/bookings/my
   getMyBookings: async (req, res, next) => {
     try {
-      const userId = req.user.userId; // Assuming user ID is stored in req.user
 
-      const [bookings] = await pool.query(
-        `SELECT * FROM bookings WHERE user_id = ? ORDER BY date DESC`,
-        [userId]
-      );
+      const bookings = await pool.query('SELECT * FROM bookings WHERE user_id = $1 ORDER BY date DESC', [req.user.id]);
+      if (!bookings || bookings.length === 0) {
+        return res.status(404).json({ message: 'No bookings found' });
+      }
+
 
       res.json({ bookings });
     } catch (err) {
@@ -46,13 +46,8 @@ export default {
   // DELETE /api/bookings/:id
   cancelBooking: async (req, res, next) => {
     try {
-      const bookingId = req.params.id;
-      const userId = req.user.userId; // Assuming user ID is stored in req.user
-
-      const [booking] = await pool.query(
-        `SELECT * FROM bookings WHERE id = ? AND user_id = ?`,
-        [bookingId, userId]
-      );
+    
+      const booking = await pool.query('SELECT * FROM bookings WHERE id = $1 AND user_id = $2', [req.params.id, req.user.id]);
 
       if (booking.length === 0) {
         return res.status(404).json({ message: 'Booking not found' });

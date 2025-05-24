@@ -1,147 +1,110 @@
-import pool from '../database/db.js';
-import bcrypt from 'bcrypt';
+// import User from "../Models/User.model.js";
+import bcrypt, {compare} from 'bcrypt';
+import getIdFromJWT from "./getIdFromJWT.js";
 import jwt from 'jsonwebtoken';
+import { fileURLToPath } from 'url';
+import path, { dirname } from 'path';
+import dotenv from 'dotenv';
+import pool from '../config/db.js'; // Assuming you have a db.js file for database connection
 
-const JWT_SECRET = 'your_jwt_secret'; // use process.env.JWT_SECRET in production
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-export default {
-  // ===================== SIGNUP =====================
-  // POST /api/auth/signup
-  signup: async (req, res, next) => {
-    try {
-      const { name, email, password, role } = req.body;
+// Load environment variables from .env file    
 
-      if (!name || !email || !password || !role) {
-        return res.status(400).json({ message: 'All fields are required' });
-      }
+dotenv.config({ path: path.join(__dirname, "../../config/.env") });
 
-      // Check if user already exists
-      const [existing] = await pool.query(
-        'SELECT id FROM users WHERE email = ?',
-        [email]
-      );
 
-      if (existing.length > 0) {
-        return res.status(409).json({ message: 'Email already in use' });
-      }
+const createUser = async (req, res) => {
+    try{
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+const insertResult = await pool.query(
+            'INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *',
+            [req.body.username, req.body.email, hashedPassword]
+        );
+          const user = insertResult.rows[0];
+        console.log("User created successfully: ", user);
 
-      // Hash password
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      // Insert new user
-      const [result] = await pool.query(
-        'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
-        [name, email, hashedPassword, role]
-      );
-
-      const userId = result.insertId;
-
-      res.status(201).json({
-        message: 'User registered successfully',
-        user: { id: userId, name, email, role },
-      });
-    } catch (err) {
-      next(err);
+        res.status(201).json({ message: "User created", user });
+    } catch (error) {
+        console.error("Error occurred while creating user: ", error); 
+        res.status(500).json({ message: error.message });
     }
-  },
-
-  // ===================== SIGNIN =====================
-  // POST /api/auth/signin
-  signin: async (req, res, next) => {
-    try {
-      const { email, password } = req.body;
-
-      if (!email || !password) {
-        return res.status(400).json({ message: 'Email and password are required' });
-      }
-
-      // Find user by email
-      const [users] = await pool.query(
-        'SELECT * FROM users WHERE email = ?',
-        [email]
-      );
-
-      const user = users[0];
-
-      if (!user) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-      }
-
-      // Compare password
-      const isMatch = await bcrypt.compare(password, user.password);
-
-      if (!isMatch) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-      }
-
-      // Generate JWT
-      const token = jwt.sign(
-        { id: user.id, role: user.role },
-        JWT_SECRET,
-        { expiresIn: '1d' }
-      );
-
-      res.json({
-        message: 'Signin successful',
-        token,
-        user: { id: user.id, name: user.name, email: user.email, role: user.role },
-      });
-    } catch (err) {
-      next(err);
-    }
-  },
-
-  // ===================== GET PROFILE =====================
-  getProfile: async (req, res, next) => {
-    try {
-      const [users] = await pool.query(
-        'SELECT id, name, email, role FROM users WHERE id = ?',
-        [req.user.id]
-      );
-
-      if (users.length === 0) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-
-      res.json(users[0]);
-    } catch (err) {
-      next(err);
-    }
-  },
-
-  // ===================== UPDATE PROFILE =====================
-  updateProfile: async (req, res, next) => {
-    try {
-      const { name, email } = req.body;
-
-      const [users] = await pool.query(
-        'SELECT * FROM users WHERE id = ?',
-        [req.user.id]
-      );
-
-      if (users.length === 0) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-
-      const [updateResult] = await pool.query(
-        'UPDATE users SET name = ?, email = ? WHERE id = ?',
-        [name || users[0].name, email || users[0].email, req.user.id]
-      );
-
-      if (updateResult.affectedRows === 0) {
-        return res.status(500).json({ message: 'Failed to update profile' });
-      }
-
-      res.json({
-        message: 'Profile updated',
-        user: {
-          id: req.user.id,
-          name: name || users[0].name,
-          email: email || users[0].email,
-        },
-      });
-    } catch (err) {
-      next(err);
-    }
-  },
 };
+//         const user = await User.create({
+//             username: req.body.username,
+//             email: req.body.email,
+//             password: hashedPassword,
+//         });
+
+//         res.status(201).json({message: "user created", user});
+        
+//     }catch (error) {
+//         console.error("Error occurred while creating user: ", error); 
+//         res.status(500).json({message: error.message});
+//     }
+// };
+
+const deleteUser = async (req, res) => {
+        const id = getIdFromJWT(req);
+        // const user = await User.findById(id);
+        const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [id]);
+        const user = userResult.rows[0];
+        console.log("in delete user: user ", user);
+        
+        if (!user) {    
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // await User.findByIdAndDelete(user._id);
+        await pool.query('DELETE FROM users WHERE id = $1', [id]);
+        console.log("in delete user: user deleted ", user);
+        res.status(200).json({ message: 'User deleted successfully' });
+};
+
+
+const loginUser = async (req, res) => {     
+    try {
+        console.log("in login user");
+        const { state, password } = req.body;
+        const searchField = state === "username" ? "username" : "email";
+        const searchValue = req.body[searchField];
+
+        console.log("in login user");
+
+
+        // const user = await User.findOne({ [searchField]: searchValue });
+        const userResult = await pool.query(`SELECT * FROM users WHERE ${searchField} = $1`, [searchValue]);
+        const user = userResult.rows[0];
+        
+        if (!user || !(await compare(password, user.password))) {
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+
+        console.log("in login user: user ", user);
+
+        const token = jwt.sign( 
+            { id: user.id, email: user.email },
+            process.env.ACCESS_TOKEN_SECRET,
+            { expiresIn: '1h', algorithm: 'HS256' }
+        );
+
+        console.log("in login user: token ", token);
+
+        // token to be sent in response.
+        res.status(200).json({ 
+            message: "Login successful",
+            token
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+
+const logoutUser = (req, res) => { // this is so easy, sessions were relly tiresome
+    res.clearCookie('token');
+    res.status(200).json({ message: 'Logged out successfully' });
+};
+
+export default { createUser, deleteUser, loginUser, logoutUser };
