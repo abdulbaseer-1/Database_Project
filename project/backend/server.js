@@ -12,6 +12,7 @@ import busRoutes from './routes/busRoutes.js';
 import routeRoutes from './routes/routeRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
 import logger from './middleware/logger.js';
+import queryRoutes from './routes/queryRoutes.js';
 
 import { fileURLToPath } from 'url';
 import path from 'path';
@@ -39,6 +40,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/buses', busRoutes);
 app.use('/api/routes', routeRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/queryRoutes', queryRoutes);
 
 // 404 Handling
 app.use(/.*/, (req, res) => {
