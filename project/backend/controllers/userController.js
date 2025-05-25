@@ -1,119 +1,154 @@
-// import User from "../Models/User.model.js";
-import bcrypt, {compare} from 'bcrypt';
-import getIdFromJWT from "../middleware/getIdFromJWT.js";
+// Import dependencies
+import bcrypt, { compare } from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { fileURLToPath } from 'url';
 import path, { dirname } from 'path';
 import dotenv from 'dotenv';
-import pool from '../database/db.js'; // Assuming you have a db.js file for database connection
+import pool from '../database/db.js'; // Database connection
 
+// Utility for path management
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Load environment variables from .env file    
-
+// Load environment variables
 dotenv.config({ path: path.join(__dirname, "../config/.env") });
 
-
 const createUser = async (req, res) => {
-    try{
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
-const insertResult = await pool.query(
-            'INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *',
-            [req.body.username, req.body.email, hashedPassword]
-        );
-          const user = insertResult.rows[0];
-        console.log("User created successfully: ", user);
+    const { username, email, password } = req.body;
 
-        res.status(201).json({ message: "User created", user });
+    try {
+        // Hash the password
+        const passwordHash = await bcrypt.hash(password, 10);
+
+        // Insert the user into the database
+        const sql = `INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)`;
+        const [result] = await pool.query(sql, [username, email, passwordHash]);
+
+        // Fetch the newly created user
+        const [user] = await pool.query(`SELECT * FROM users WHERE id = ?`, [result.insertId]);
+
+        res.status(201).json({ user });
     } catch (error) {
-        console.error("Error occurred while creating user: ", error); 
-        res.status(500).json({ message: error.message });
+        console.error("Error occurred while creating user: ", error);
+        res.status(500).json({ message: "Internal server error" });
     }
 };
+
 const deleteUser = async (req, res) => {
-        const id = getIdFromJWT(req);
-        // const user = await User.findById(id);
-        const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [id]);
-        const user = userResult.rows[0];
-        console.log("in delete user: user ", user);
-        
-        if (!user) {    
+    const id = getIdFromJWT(req);
+
+    try {
+        // Fetch the user
+        const [userResult] = await pool.query('SELECT * FROM users WHERE id = ?', [id]);
+
+        if (userResult.length === 0) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // await User.findByIdAndDelete(user._id);
-        await pool.query('DELETE FROM users WHERE id = $1', [id]);
-        console.log("in delete user: user deleted ", user);
+        // Delete the user
+        await pool.query('DELETE FROM users WHERE id = ?', [id]);
         res.status(200).json({ message: 'User deleted successfully' });
+    } catch (error) {
+        console.error("Error deleting user: ", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
 };
 
-
-const loginUser = async (req, res) => {     
+const loginUser = async (req, res) => {
     try {
-        console.log("in login user");
         const { state, password } = req.body;
-        const searchField = state === "username" ? "username" : "email";
+        const searchField = state === "username" ? "name" : "email";
         const searchValue = req.body[searchField];
 
-        console.log("in login user");
+        console.log("Login attempt: ", { searchField, searchValue });
 
+        // Fetch the user
+        const [userResult] = await pool.query(`SELECT * FROM users WHERE ${searchField} = ?`, [searchValue]);
 
-        // const user = await User.findOne({ [searchField]: searchValue });
-        const userResult = await pool.query(`SELECT * FROM users WHERE ${searchField} = $1`, [searchValue]);
-        const user = userResult.rows[0];
-        
-        if (!user || !(await compare(password, user.password))) {
+        if (userResult.length === 0) {
+            console.log("No user found for: ", searchValue);
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
-        console.log("in login user: user ", user);
+        const user = userResult[0];
 
-        const token = jwt.sign( 
+        console.log("User fetched: ", user);
+
+        if (!user.password_hash) {
+            console.error("Password hash missing in database for user: ", user.id);
+            return res.status(500).json({ message: "Server error: User password missing in database" });
+        }
+
+        // Compare the entered password with the stored hash
+        const isPasswordValid = await compare(password, user.password_hash);
+        if (!isPasswordValid) {
+            console.log("Invalid password for user: ", user.id);
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+
+        // Generate a token
+        const token = jwt.sign(
             { id: user.id, email: user.email },
             process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: '1h', algorithm: 'HS256' }
         );
 
-        console.log("in login user: token ", token);
+        console.log("Token generated for user: ", user.id);
 
-        // token to be sent in response.
-        res.status(200).json({ 
+        res.status(200).json({
             message: "Login successful",
-            token
+            token,
         });
     } catch (error) {
+        console.error("Error during login: ", error);
         res.status(500).json({ message: 'Server error' });
     }
 };
 
 
-const logoutUser = (req, res) => { // this is so easy, sessions were relly tiresome
+const logoutUser = (req, res) => {
     res.clearCookie('token');
     res.status(200).json({ message: 'Logged out successfully' });
 };
 
 const getProfile = async (req, res) => {
     try {
-        const userId = req.user.id; // Assuming JWT middleware adds `req.user`
-        // Fetch the user profile based on the user ID
-        const userProfile = await db.query('SELECT * FROM users WHERE id = ?', [userId]);
+        const userId = req.user.id;
+
+        // Fetch the user profile
+        const [userProfile] = await pool.query('SELECT * FROM users WHERE id = ?', [userId]);
+
+        if (userProfile.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
         res.json(userProfile[0]);
     } catch (error) {
+        console.error("Error fetching profile: ", error);
         res.status(500).json({ message: 'Error fetching user profile', error });
     }
 };
 
 const updateProfile = async (req, res) => {
     try {
-        const userId = req.user.id; // Assuming JWT middleware adds `req.user`
-        const { name, email } = req.body; // Assuming only name and email are updatable
-        await db.query('UPDATE users SET name = ?, email = ? WHERE id = ?', [name, email, userId]);
+        const userId = req.user.id;
+        const { name, email } = req.body;
+
+        // Update the user profile
+        await pool.query('UPDATE users SET name = ?, email = ? WHERE id = ?', [name, email, userId]);
         res.json({ message: 'Profile updated successfully' });
     } catch (error) {
+        console.error("Error updating profile: ", error);
         res.status(500).json({ message: 'Error updating user profile', error });
     }
 };
 
-
-export default { createUser, deleteUser, loginUser, logoutUser,getProfile,updateProfile, };
+// Export controllers
+export default {
+    createUser,
+    deleteUser,
+    loginUser,
+    logoutUser,
+    getProfile,
+    updateProfile,
+};

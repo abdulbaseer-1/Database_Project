@@ -6,12 +6,14 @@ import ProfilePage from './pages/Profile/Profile.jsx';
 import SettingsPage from './pages/Settings/Settings.jsx';
 import AboutPage from './pages/ContactUs/ContactUs.jsx';
 import NotFoundPage from './pages/NotFound/NotFound.jsx';
+import SiginSignup from './pages/SigninSignupPage/SigninSignupPage.jsx';
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<SiginSignup/>} />
+        <Route path="/Home" element={<HomePage />} />
         <Route path="/Bookings" element={<BookingsPage />} />
         <Route path="/Settings" element={<SettingsPage />} />
         <Route path="/Profile" element={<ProfilePage />} />
