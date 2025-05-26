@@ -1,9 +1,8 @@
-
 .busBookingContainer {
     max-width: 90%;
     margin: 2% auto 0 auto;
     padding: 2rem;
-    background-color: #00274d;
+    background-color: #f5f9fc; /* Light background for professional look */
     border-radius: 0.5rem;
     box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease, transform 0.3s ease;
@@ -17,14 +16,14 @@
 h2 {
     text-align: center;
     font-size: 1.75rem;
-    color: white;
+    color: #004d66; /* Dark teal for heading */
     margin-bottom: 1.25rem;
     font-weight: bold;
     transition: color 0.3s ease;
 }
 
 h2:hover {
-    color: #007bff;
+    color: #0099cc;
 }
 
 .inlineGroup {
@@ -45,13 +44,13 @@ h2:hover {
     display: block;
     font-weight: 600;
     font-size: 1rem;
-    color: white;
+    color: #004d66;
     margin-bottom: 0.5rem;
     transition: color 0.3s ease;
 }
 
 .formGroup label:hover {
-    color: #007bff;
+    color: #0099cc;
 }
 
 .formGroup input[type="text"],
@@ -61,10 +60,11 @@ h2:hover {
 .formGroup textarea {
     width: 100%;
     padding: 0.625rem;
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
     border-radius: 0.25rem;
     font-size: 1rem;
     color: #333;
+    background-color: #ffffff;
     transition: all 0.3s ease;
 }
 
@@ -73,8 +73,8 @@ h2:hover {
 .formGroup input[type="file"]:focus,
 .formGroup select:focus,
 .formGroup textarea:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(46, 143, 247, 0.5);
+    border-color: #00aaff;
+    box-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
     outline: none;
 }
 
@@ -87,7 +87,7 @@ button[type="submit"] {
     width: 100%;
     padding: 0.75rem;
     font-size: 1.125rem;
-    background-color: #007bff;
+    background-color: #00aaff;
     color: white;
     border: none;
     border-radius: 0.25rem;
@@ -96,13 +96,13 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-    background-color: #0056b3;
+    background-color: #0077aa;
     transform: translateY(-2px);
 }
 
 button[type="submit"]:focus {
     outline: none;
-    box-shadow: 0 0 10px rgba(0, 123, 255, 0.7);
+    box-shadow: 0 0 10px rgba(0, 170, 255, 0.7);
 }
 
 @media (max-width: 48em) {
@@ -140,5 +140,5 @@ button[type="submit"]:focus {
 
 .formGroup input[type="file"] {
     padding: 0.3125rem;
-    background-color: #fff;
+    background-color: #ffffff;
 }
