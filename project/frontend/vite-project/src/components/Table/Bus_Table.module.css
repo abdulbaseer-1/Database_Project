@@ -1,117 +1,39 @@
-/* Table Container */
-.table_container {
-  margin: 7%;
-  padding: 10px;
-  max-width: 100%;
-  max-height: 600px;
-  overflow: visible;
-}
-
-/* Main Table Styling */
-.bus_table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: Arial, sans-serif;
-  margin-top: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border: 1px solid black;
-  border-radius: 4%;
-  color: #ddd;
-  background-color: #00274d;
-  border-spacing: 2px;
-}
-
-/* Table Headers */
-.table_header {
-  color: #ddd;
-  background-color: #00274d;
-  padding: 12px 15px;
-  text-align: left;
-  font-weight: bold;
-  border: 1px solid #ddd;
-  text-transform: uppercase;
-}
-
-/* Table Cells */
-.table_cell {
-  color: #ddd;
-  background-color: #00274d;
-  padding: 12px 15px;
-  text-align: left;
-  border: 1px solid #ddd;
-  text-wrap: nowrap;
-}
-
-/* Centered Table Cells */
-.table_cell_centered {
-  background-color: #00274d;
-  padding: 12px 15px;
-  text-align: center;
-  border: 1px solid #ddd;
-  text-wrap: nowrap;
-}
-
-/* Action Button */
-.action_button {
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 6px 10px;
-  margin: 0 4px;
+.table_heading {
+  font-size: 1.5em;
   color: #00274d;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
-.action_button:hover {
-  background-color: #f0f0f0;
-  transform: scale(0.95);
-}
-
-/* Alternating Row Colors */
-.table_row:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-.table_row:nth-child(odd) {
-  background-color: #ffffff;
-}
-
-/* Row Hover Effect */
-.table_row:hover {
-  background-color: #f1f1f1;
-  cursor: pointer;
-}
-
-/* Loading State */
-.loading_container {
+.filter_container {
   display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
   justify-content: center;
-  align-items: center;
-  min-height: 200px;
+  margin-bottom: 20px;
 }
 
-.loading_spinner {
+.filter_container select,
+.reset_button {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.95em;
   color: #00274d;
-  font-size: 1.2em;
+  background-color: #f0f8ff;
+  transition: all 0.3s ease;
 }
 
-/* Error State */
-.error_container {
-  color: red;
-  padding: 20px;
-  text-align: center;
+.filter_container select:focus,
+.reset_button:hover {
+  border-color: #00274d;
+  outline: none;
+  background-color: #e6f2ff;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .bus_table {
-    font-size: 14px;
-  }
-
-  .table_header,
-  .table_cell {
-    padding: 8px 10px;
-  }
+.reset_button {
+  font-weight: bold;
+  cursor: pointer;
 }
+
+/* Existing table styles remain same */

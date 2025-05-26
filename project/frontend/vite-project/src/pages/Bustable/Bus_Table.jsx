@@ -7,14 +7,22 @@ import Bus_Table from "../../components/Tables/Bus_Table/Bus_Table";
 
 function Bus_Table_Page() {
   return (
-    <>
+    <div className={bus_table_style.page_wrapper}>
       <Header />
       <Hero />
-      <Content className={bus_table_style.contentBody}>
-        <Bus_Table />
-      </Content>
+
+      <main className={bus_table_style.content_section}>
+        <Content className={bus_table_style.content_body}>
+          <h1 className={bus_table_style.page_title}>Find Your Bus</h1>
+          <p className={bus_table_style.page_subtitle}>
+            Browse available buses by location, time, and type.
+          </p>
+          <Bus_Table className={bus_table_style.table_wrapper} />
+        </Content>
+      </main>
+
       <Footer />
-    </>
+    </div>
   );
 }
 
