@@ -1,4 +1,6 @@
-import mysql from ('mysql2/promise');
+import mysql from 'mysql2/promise';
+
+import pool from '../database/db.js';
 
 async function setupDatabase() {
   try {
@@ -6,7 +8,7 @@ async function setupDatabase() {
     const connection = await mysql.createConnection({
       host: 'localhost',
       user: 'root',
-      password: 'your_password_here' // replace with your MySQL root password
+      password: '23pwbcs1031' // replace with your MySQL root password
     });
     console.log('Connected to MySQL server.');
 
@@ -100,10 +102,22 @@ async function setupDatabase() {
     // 5. Insert sample seed data
 
     // Insert a sample admin user
-    await connection.query(`
-      INSERT INTO users (name, email, password, role)
-      VALUES ('Admin User', 'admin@example.com', 'securepassword', 'admin')
-    `);
+    // Check if bus already exists
+const [existingBus] = await pool.query(
+  'SELECT * FROM buses WHERE bus_number = ?',
+  ['EXP1234']
+);
+
+if (existingBus.length === 0) {
+  await pool.query(
+    'INSERT INTO buses (bus_name, bus_number, image_url, total_seats) VALUES (?, ?, ?, ?)',
+    ['City Express', 'EXP1234', 'https://example.com/bus.jpg', 50]
+  );
+  console.log("Sample bus inserted.");
+} else {
+  console.log("Sample bus already exists, skipping creation.");
+}
+
     console.log('Sample admin user inserted.');
 
     // Insert a sample bus
@@ -150,4 +164,4 @@ async function setupDatabase() {
 }
 
 // Run the setup
-setupDatabase();
+export default setupDatabase();
