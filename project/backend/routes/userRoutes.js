@@ -27,4 +27,7 @@ router.delete('/deleteProfile', authenticateJWT, userController.deleteUser);
 // Route to logout the user (clear JWT token or session)
 router.post('/logout', authenticateJWT, userController.logoutUser);
 
+// to get user role
+router.get('/role', authenticateJWT, getUserRole);
+
 export default router;

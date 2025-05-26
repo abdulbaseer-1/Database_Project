@@ -1,44 +1,39 @@
 import jwt from "jsonwebtoken";
-import { fileURLToPath } from 'url';
-import path,{ dirname } from 'path';
-import dotenv from 'dotenv';
+import { fileURLToPath } from "url";
+import path, { dirname } from "path";
+import dotenv from "dotenv";
 
+// Set up __filename and __dirname for ES module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// Load environment variables
 dotenv.config({ path: path.join(__dirname, "../../config/.env") });
 
 const getUserIdFromToken = (req) => {
-  try {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            throw new Error("Authorization header is missing");
+        }
 
-    console.log("inside get id from jwt");
+        const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : authHeader;
 
-      const authHeader = req.headers.authorization;
-      if (!authHeader) {
-          throw new Error("No authorization header");
-      }
+        if (!token) {
+            throw new Error("Token is empty");
+        }
 
-      // Make sure to handle 'Bearer ' prefix
-      const token = authHeader.startsWith('Bearer ') 
-          ? authHeader.slice(7) 
-          : authHeader;
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-          console.log("inside get id from jwt, token", token);
+        if (!decoded || !decoded.id) {
+            throw new Error("Invalid token payload");
+        }
 
-      if (!token) {
-          throw new Error("No token provided");
-      }
-
-      console.log("inside get id from jwt, token", token);
-
-      const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-      
-      console.log("inside get id from jwt, decoded", decoded);
-      return decoded.id;
-  } catch (error) {
-      console.error("Token verification error:", error);
-      throw error;
-  }
+        return decoded.id;
+    } catch (error) {
+        console.error("Error in getUserIdFromToken:", error.message);
+        throw error;
+    }
 };
 
 export default getUserIdFromToken;

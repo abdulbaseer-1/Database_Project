@@ -143,6 +143,23 @@ const updateProfile = async (req, res) => {
     }
 };
 
+const getUserRole = async (req, res) => {
+    try {
+        const userId = getUserIdFromToken(req);
+
+        const [userResult] = await pool.query('SELECT role FROM users WHERE id = ?', [userId]);
+
+        if (userResult.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.json({ role: userResult[0].role });
+    } catch (error) {
+        console.error('Error fetching user role:', error.message);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
 // Export controllers
 export default {
     createUser,
@@ -151,4 +168,5 @@ export default {
     logoutUser,
     getProfile,
     updateProfile,
+    getUserRole,    
 };
