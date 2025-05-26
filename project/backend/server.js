@@ -13,6 +13,7 @@ import routeRoutes from './routes/routeRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
 import logger from './middleware/logger.js';
 import queryRoutes from './routes/queryRoutes.js';
+import makedb from './database/makedb.js';
 
 import { fileURLToPath } from 'url';
 import path from 'path';
@@ -34,6 +35,7 @@ app.use(logger);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
+makedb.setupDatabase;
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);

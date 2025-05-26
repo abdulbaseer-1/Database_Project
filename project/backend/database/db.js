@@ -1,7 +1,7 @@
 
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
-dotenv.config({path:"../config/"});
+dotenv.config({path:"../config/.env"});
 
 let pool;
 try {

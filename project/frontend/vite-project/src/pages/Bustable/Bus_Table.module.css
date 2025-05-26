@@ -1,0 +1,65 @@
+/* Page Layout */
+.page_wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, #f5f9ff, #dceeff);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.content_section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 20px;
+  background-color: #f7f9fb;
+}
+
+/* Content container */
+.content_body {
+  width: 100%;
+  max-width: 1200px;
+  box-sizing: border-box;
+  background-color: white;
+  border-radius: 16px;
+  padding: 30px 40px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  overflow-y: auto;
+}
+
+/* Table wrapper if needed */
+.table_wrapper {
+  margin-top: 20px;
+}
+
+/* Headings */
+.page_title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #003366;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.page_subtitle {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .content_body {
+    padding: 20px;
+  }
+
+  .page_title {
+    font-size: 1.5rem;
+  }
+
+  .page_subtitle {
+    font-size: 0.9rem;
+  }
+}
