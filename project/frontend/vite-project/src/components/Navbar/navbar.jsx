@@ -46,7 +46,7 @@ function Navbar({ className }) {
             <Link to="/Home">Home</Link>
             <Link to="/Bookings">Bookings</Link>
             <Link to="/Settings">Settings</Link>
-            <Link to="/ContactUs">Contact us</Link>
+            <Link to="/ContactUs">ContactUs</Link>
             {role === 'admin' && <Link to="/Query">Query</Link>}
             {error && <p className={Navbar_style.error}>Error: {error}</p>}
         </div>

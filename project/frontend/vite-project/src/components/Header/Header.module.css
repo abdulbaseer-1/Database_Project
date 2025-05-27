@@ -6,11 +6,14 @@
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  height: 80px;
+  height: 100px; /* Increased from 80px */
   padding: 0 32px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(90deg, #004a99, #0056b3);
+  box-shadow: 0 4px 12px rgba(0, 86, 179, 0.4);
   overflow: hidden;
   margin: 0;
+  color: #e6f0fa;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* Banner as background */
@@ -34,12 +37,12 @@
 }
 
 .logoImage {
-  height: 50px;
-  width: 50px;
+  height: 60px; /* Slightly bigger for the taller header */
+  width: 60px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 2px solid #e6f0fa;
+  box-shadow: 0 2px 6px rgba(0, 86, 179, 0.6);
   transition: transform 0.2s ease;
 }
 
@@ -65,12 +68,12 @@
 }
 
 .Profile_icon {
-  height: 40px;
-  width: 40px;
+  height: 50px; /* Bigger icon with increased header height */
+  width: 50px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 2px solid #e6f0fa;
+  box-shadow: 0 2px 6px rgba(0, 86, 179, 0.6);
   cursor: pointer;
   transition: transform 0.2s ease;
 }
@@ -83,16 +86,16 @@
 @media (max-width: 768px) {
   .header {
     padding: 0 16px;
-    height: 70px;
+    height: 90px; /* Increased from 70px */
   }
   
   .logoImage {
-    height: 40px;
-    width: 40px;
+    height: 50px; /* Adjust proportionally */
+    width: 50px;
   }
   
   .Profile_icon {
-    height: 35px;
-    width: 35px;
+    height: 45px;
+    width: 45px;
   }
 }

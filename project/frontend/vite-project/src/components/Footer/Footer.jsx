@@ -14,10 +14,10 @@ function Footer({className}) {
                         <a href="https://www.instagram.com/khanabdulbaseerkhanyousafzai/" target="_blank"><img src={github_logo} alt="instagram"/> <p>Abdul Baseer</p></a>
                     </div>
                     <div className={footer_style.contact_2}>
-                        <a href="https://github.com/abdulbaseer-1" target="_blank"><img src={github_logo} alt="github"/> <p>Zain</p></a>
+                        <a href="https://github.com/abdulbaseer-1" target="_blank"><img src={github_logo} alt="github"/> <p>Mudasir khan</p></a>
                     </div>
                     <div className={footer_style.contact_3}>
-                        <a href="mailto:abdulbaseer.s130@gmail.com" target="_blank"><img src={github_logo} alt="email"/> <p>Mudasir Khan</p></a>
+                        <a href="mailto:abdulbaseer.s130@gmail.com" target="_blank"><img src={github_logo} alt="email"/> <p>Muhammad mohsin</p></a>
                     </div>
                 </div>
             </div>
