@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import Header from "../../components/Header/Header.jsx";
 import Footer from "../../components/Footer/Footer.jsx";
 import FormStyle from "./ContactUs.module.css";
-import student1 from "../../assets/icons/bus cartoon vitage.jpg";
+import student1 from "../../assets/icons/Student-1.jpeg";
+import student2 from "../../assets/icons/WhatsApp Image 2025-05-28 at 01.14.49_92be9de7.jpg";
+import student3 from "../../assets/icons/bus cartoon vitage.jpg";
 import github_logo from "../../assets/icons/github.png";
 
 function ContactUs() {
@@ -11,7 +13,7 @@ function ContactUs() {
   const [message, setMessage] = useState("");
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // prevent page reload
+    e.preventDefault();
     alert("Feedback sent. Thank you!");
   };
 
@@ -76,30 +78,35 @@ function ContactUs() {
 
         {/* Member 2 */}
         <div className={FormStyle.contact}>
-          <img src={student1} alt="Mudasir Khan" />
+          <img src={student2} alt="Mudasir Khan" />
           <h5>Meet: Mudasir Khan</h5>
           <p>Software engineering enthusiast with expertise in backend systems.</p>
-          <a href="https://github.com/mudasirkhan" target="_blank" rel="noreferrer">
+          <a href="https://github.com/Mudasirkhan975" target="_blank" rel="noreferrer">
             <img src={github_logo} alt="GitHub" />
           </a>
         </div>
 
         {/* Member 3 */}
         <div className={FormStyle.contact}>
-          <img src={student1} alt="Muhammad Mohsin" />
+          <img src={student3} alt="Muhammad Mohsin" />
           <h5>Meet: Muhammad Mohsin</h5>
           <p>Passionate about UI/UX design and frontend development.</p>
           <a href="https://github.com/muhammadmohsin" target="_blank" rel="noreferrer">
             <img src={github_logo} alt="GitHub" />
           </a>
         </div>
+      </div>
 
-        <div className={FormStyle.description}>
-          <h3>Description:</h3>
-          <p>
-            This Bus Management System is a comprehensive web application designed to facilitate smooth scheduling, booking, and management of bus routes and services. Developed as a collaborative project using the MERN stack, it aims to provide users with a seamless ticket booking experience and admins with efficient operational controls.
-          </p>
-        </div>
+      {/* Description Section - clearly separated */}
+      <div className={FormStyle.description}>
+        <h3>Description:</h3>
+        <p>
+          This Bus Management System is a comprehensive web application designed
+          to facilitate smooth scheduling, booking, and management of bus routes
+          and services. Developed as a collaborative project using the MERN stack,
+          it aims to provide users with a seamless ticket booking experience and
+          admins with efficient operational controls.
+        </p>
       </div>
 
       <Footer />

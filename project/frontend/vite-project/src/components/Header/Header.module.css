@@ -37,8 +37,8 @@
 }
 
 .logoImage {
-  height: 60px; /* Slightly bigger for the taller header */
-  width: 60px;
+  height: 72px; /* Slightly increased from 68px */
+  width: 72px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #e6f0fa;
@@ -68,7 +68,7 @@
 }
 
 .Profile_icon {
-  height: 50px; /* Bigger icon with increased header height */
+  height: 50px; /* Matches increased header height */
   width: 50px;
   border-radius: 50%;
   object-fit: cover;
@@ -88,12 +88,12 @@
     padding: 0 16px;
     height: 90px; /* Increased from 70px */
   }
-  
+
   .logoImage {
-    height: 50px; /* Adjust proportionally */
-    width: 50px;
+    height: 58px; /* Slightly increased from 56px */
+    width: 58px;
   }
-  
+
   .Profile_icon {
     height: 45px;
     width: 45px;

@@ -2,7 +2,7 @@ import React from "react";
 import headerStyle from './Header.module.css';
 import Navbar from '../Navbar/navbar';
 import Banner from '../../assets/icons/banner.jpeg';
-import Logo from '../../assets/icons/stork.jpg';
+import Logo from '../../assets/icons/camper-van-and-motor-home-illustration-logo-vector.jpg';
 import Profile_pic from '../../assets/icons/github.png';
 
 
