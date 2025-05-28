@@ -17,7 +17,7 @@ function Footer({className}) {
                         <a href="https://github.com/Mudasirkhan975" target="_blank"><img src={github_logo} alt="github"/> <p>Mudasir khan</p></a>
                     </div>
                     <div className={footer_style.contact_3}>
-                        <a href="https://github.com/abdulbaseer-1" target="_blank"><img src={github_logo} alt="email"/> <p>Muhammad mohsin</p></a>
+                        <a href="https://github.com/mohsinakabilsins" target="_blank"><img src={github_logo} alt="email"/> <p>Muhammad mohsin</p></a>
                     </div>
                 </div>
             </div>

@@ -4,7 +4,7 @@ import Footer from "../../components/Footer/Footer.jsx";
 import FormStyle from "./ContactUs.module.css";
 import student1 from "../../assets/icons/Student-1.jpeg";
 import student2 from "../../assets/icons/WhatsApp Image 2025-05-28 at 01.14.49_92be9de7.jpg";
-import student3 from "../../assets/icons/bus cartoon vitage.jpg";
+import student3 from "../../assets/icons/WhatsApp Image 2025-05-28 at 15.08.10_5c164116.jpg";
 import github_logo from "../../assets/icons/github.png";
 
 function ContactUs() {
@@ -91,7 +91,7 @@ function ContactUs() {
           <img src={student3} alt="Muhammad Mohsin" />
           <h5>Meet: Muhammad Mohsin</h5>
           <p>Passionate about UI/UX design and frontend development.</p>
-          <a href="https://github.com/muhammadmohsin" target="_blank" rel="noreferrer">
+          <a href="https://github.com/mohsinakabilsins" target="_blank" rel="noreferrer">
             <img src={github_logo} alt="GitHub" />
           </a>
         </div>
