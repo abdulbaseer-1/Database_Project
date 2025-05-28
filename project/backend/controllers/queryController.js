@@ -4,6 +4,8 @@ import pool from '../database/db.js';
 export const executeSQLQuery = async (req, res) => {
   const { query } = req.body;
 
+  console.log("query :", query);
+
   if (!query) {
     return res.status(400).json({ error: 'SQL query is required' });
   }

@@ -35,6 +35,8 @@ const createUser = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
+    console.log("delete called");
+
     const id = getIdFromJWT(req);
 
     try {
@@ -60,8 +62,6 @@ const loginUser = async (req, res) => {
         const searchField = state === "username" ? "name" : "email";
         const searchValue = req.body[searchField];
 
-        console.log("Login attempt: ", { searchField, searchValue });
-
         // Fetch the user
         const [userResult] = await pool.query(`SELECT * FROM users WHERE ${searchField} = ?`, [searchValue]);
 
@@ -71,8 +71,6 @@ const loginUser = async (req, res) => {
         }
 
         const user = userResult[0];
-
-        console.log("User fetched: ", user);
 
         if (!user.password_hash) {
             console.error("Password hash missing in database for user: ", user.id);
@@ -93,8 +91,6 @@ const loginUser = async (req, res) => {
             { expiresIn: '1h', algorithm: 'HS256' }
         );
 
-        console.log("Token generated for user: ", user.id);
-
         res.status(200).json({
             message: "Login successful",
             token,
@@ -107,8 +103,31 @@ const loginUser = async (req, res) => {
 
 
 const logoutUser = (req, res) => {
+    
+    console.log("logout called");
+
     res.clearCookie('token');
     res.status(200).json({ message: 'Logged out successfully' });
+};
+
+const getUserRole = async (req, res) => {
+    try {
+        console.log("in user role");
+        const userId = getUserIdFromToken(req);
+
+        const [userResult] = await pool.query('SELECT role FROM users WHERE id = ?', [userId]);
+
+        if (userResult.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        console.log("in user role");
+        console.log("user role :" , userResult[0].role);
+        res.json({ role: userResult[0].role });
+    } catch (error) {
+        console.error('Error fetching user role:', error.message);
+        res.status(500).json({ message: 'Internal server error' });
+    }
 };
 
 const getProfile = async (req, res) => {
@@ -143,22 +162,7 @@ const updateProfile = async (req, res) => {
     }
 };
 
-const getUserRole = async (req, res) => {
-    try {
-        const userId = getUserIdFromToken(req);
 
-        const [userResult] = await pool.query('SELECT role FROM users WHERE id = ?', [userId]);
-
-        if (userResult.length === 0) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        res.json({ role: userResult[0].role });
-    } catch (error) {
-        console.error('Error fetching user role:', error.message);
-        res.status(500).json({ message: 'Internal server error' });
-    }
-};
 
 // Export controllers
 export default {
@@ -166,7 +170,7 @@ export default {
     deleteUser,
     loginUser,
     logoutUser,
+    getUserRole,
     getProfile,
     updateProfile,
-    getUserRole,    
 };

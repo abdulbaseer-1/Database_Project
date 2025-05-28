@@ -29,7 +29,7 @@ function Settings() {
         
         await new Promise(resolve => setTimeout(resolve, 100));
         
-        navigate("/SigninSignup");
+        navigate("/");
     } catch (error) {
         console.error("Logout error:", error);
         alert("Logout failed. Please try again.");
@@ -57,7 +57,7 @@ function Settings() {
   return(
     <>
       <Header/>
-      <div className={setting_style.settingsContainer}>
+        <div className={setting_style.settingsContainer}>
         <a href="/Change_Password" className={setting_style.settingsLink}>
           Change Password
         </a>

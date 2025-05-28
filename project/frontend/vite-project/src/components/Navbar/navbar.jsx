@@ -1,45 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
+import { UserContext } from '../../components/contexts/userContexts.jsx';
 import Navbar_style from './Navbar.module.css';
 import { Link } from 'react-router-dom';
 
 function Navbar({ className }) {
-    const [role, setRole] = useState(null);
-    const [error, setError] = useState(null); // To store any fetch errors
+    const { role, isLoading, error } = useContext(UserContext);
 
-    useEffect(() => {
-        const fetchRole = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    throw new Error("User not authenticated. Please log in.");
-                }
-
-                const response = await fetch('/api/user/role', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.statusText}`);
-                }
-
-                const data = await response.json();
-                if (!data.role) {
-                    throw new Error("No role returned from server.");
-                }
-
-                setRole(data.role); // Set user role in state
-            } catch (error) {
-                console.error('Error fetching role:', error.message);
-                setError(error.message); // Save the error to state
-            }
-        };
-
-        fetchRole();
-    }, []);
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className={`${Navbar_style.navbar} ${className}`}>
@@ -47,8 +16,9 @@ function Navbar({ className }) {
             <Link to="/Bookings">Bookings</Link>
             <Link to="/Settings">Settings</Link>
             <Link to="/ContactUs">Contact us</Link>
+            <Link to="/Query"> Query</Link>
             {role === 'admin' && <Link to="/Query">Query</Link>}
-            {error && <p className={Navbar_style.error}>Error: {error}</p>}
+            {/* {error && <p className={Navbar_style.error}>Error: {error}</p>} */}
         </div>
     );
 }
