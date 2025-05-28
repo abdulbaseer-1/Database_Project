@@ -1,0 +1,49 @@
+.aboutUs {
+  background-color: #ffffff;
+  color: #003a75;
+  padding: 40px 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 2.2rem;
+  margin-bottom: 20px;
+  color: #0056b3;
+}
+
+h2 {
+  color: #0056b3;
+  font-size: 1.5rem;
+  margin-top: 30px;
+}
+
+p {
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 15px;
+}
+
+ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0 0 20px 0;
+}
+
+li {
+  background-color: #f1f5ff;
+  border-left: 4px solid #0056b3;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+em {
+  color: #333;
+  font-style: italic;
+}

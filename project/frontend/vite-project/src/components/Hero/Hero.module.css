@@ -1,55 +1,59 @@
-.hero{
+.hero {
     position: relative;
     width: 100%;
-    height: fit-content;
+    height: 90vh;  /* slightly reduced and fixed height for nice proportion */
+    max-height: 500px; /* optional max height */
     overflow: hidden;
 }
+
 .hero > img {
     width: 100%;
-    height: auto;
+    height: 100%;  /* full height to fill container */
     object-fit: cover;
-    /* margin-top: 3%; */
-    border-radius: 4%;
+    border-radius: 8px;
 }
-@media screen and (max-width:1080px) {
-    .hero{
-        height: 70%;
+
+@media screen and (max-width: 1080px) {
+    .hero {
+        height: 60vh; /* smaller height on smaller screens */
+        max-height: 350px;
     }
     .hero > img {
         width: 100%;
-        height: auto;
+        height: 100%;
     }
 }
 
-.hero > .next_btn, 
+.hero > .next_btn,
 .hero > .prev_btn {
     position: absolute;
     top: 50%;
-    font-size: x-large;
-    font-weight: 900;
-    transform: translateY(-50%); /* vertical centering */
-    z-index: 10; /* Ensures the buttons appear above the image */
-    color:rgba(58, 60, 61, 0.508);
-    padding: 0% 2%;
-    background-color: #740712;
-    box-shadow: 2px 1px 3px rgba(213, 232, 5, 0.15);
-    border-radius: 5px;
-    border: 0px;
-}
-.hero > .next_btn:hover, 
-.hero > .prev_btn:hover {
-    transform:translateY(-50%) scale(1.1); /* fix : note at end*/
+    font-size: 2rem;
+    font-weight: 700;
+    transform: translateY(-50%);
+    z-index: 10;
+    color: white;
+    padding: 0.4rem 1rem;
+    background: linear-gradient(135deg, #0056b3, #003a75);
+    border-radius: 50%;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 86, 179, 0.6);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
-    box-shadow: 2px 1px 3px rgba(0,0,0,0.5);
-}
-.hero > .next_btn {
-    right: 10px;
-}
-.hero > .prev_btn {
-    left: 10px;
+    user-select: none;
 }
 
-/*
-Note : transform fix: 
-The transform property is a shorthand, so every time you declare it, it overrides the existing transformations. By combining translateY(-50%) with scale(1.1) in a single transform property, you ensure that the vertical centering remains intact while the scaling is applied on hover.
-*/
+.hero > .next_btn:hover,
+.hero > .prev_btn:hover {
+    transform: translateY(-50%) scale(1.15);
+    box-shadow: 0 6px 20px rgba(0, 86, 179, 0.9);
+    background: linear-gradient(135deg, #003a75, #001f3f);
+}
+
+.hero > .next_btn {
+    right: 15px;
+}
+
+.hero > .prev_btn {
+    left: 15px;
+}
