@@ -1,7 +1,19 @@
 // middleware/authenticateJWT.js
 import jwt from 'jsonwebtoken';
+import { fileURLToPath } from "url";
+import path, { dirname } from "path";
+import dotenv from "dotenv";
+
+// Set up __filename and __dirname for ES module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Load environment variables
+dotenv.config({ path: path.join(__dirname, "../../config/.env") });
+
 
 function authenticateJWT(req, res, next) {
+  console.log('authenticateJWT middleware running');
   // 1. Grab token from Authorization header or cookie
   let token = null;
   const authHeader = req.headers.authorization;
@@ -18,13 +30,15 @@ function authenticateJWT(req, res, next) {
   }
 
   // 2. Verify token
-  jwt.verify(token, process.env.JWT_SECRET, (err, payload) => {
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
     if (err) {
       // Token expired or malformed
+      console.log("inside verify");
       const message =
         err.name === 'TokenExpiredError'
           ? 'Session expired. Please log in again.'
           : 'Invalid authentication token.';
+          console.log("message : ", message);
       return res.status(403).json({ message });
     }
 

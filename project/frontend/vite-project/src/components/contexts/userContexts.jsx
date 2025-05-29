@@ -1,61 +1,40 @@
 import React, { createContext, useState, useEffect } from 'react';
-const URL = import.meta.env.VITE_BACKEND_URL;
-
-if (!URL) {
-  console.log('Environment variables:', import.meta.env);
-    throw new Error("VITE_BACKEND_URL is not defined in the environment file");
-}
 
 export const UserContext = createContext();
 
+const URL = import.meta.env.VITE_BACKEND_URL;
+
 export const UserProvider = ({ children }) => {
-    const [role, setRole] = useState(null);
+    const [user, setUser] = useState({ role: null, name: null, contact: null });
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchRole = async () => {
+        const fetchUserData = async () => {
             try {
                 const token = localStorage.getItem('token');
-                console.log("token :", token);
-                if (!token) {
-                    throw new Error('User not authenticated. Please log in.');
-                }
+                if (!token) throw new Error('Not authenticated');
 
-                const response = await fetch(`${URL}/api/users/role`, { //use URL here, then shows in ackend logs
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
+                const response = await fetch(`${URL}/api/users/details`, {
+                    headers: { Authorization: `Bearer ${token}` },
                 });
 
-                console.log("response :", response);
-
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.statusText}`);
-                }
+                if (!response.ok) throw new Error('Failed to fetch user details');
 
                 const data = await response.json();
-                if (!data.role) {
-                    throw new Error('No role returned from server.');
-                }
-
-                console.log("user role : " , data.role);
-                setRole(data.role);
+                setUser({ role: data.role, name: data.name, contact: data.contact });
             } catch (error) {
-                console.error('Error fetching role:', error.message);
-                setError(error.message);
+                console.error(error.message);
+                setUser({ role: null, name: null, contact: null });
             } finally {
                 setIsLoading(false);
             }
         };
 
-        fetchRole();
+        fetchUserData();
     }, []);
 
     return (
-        <UserContext.Provider value={{ role, isLoading, error }}>
+        <UserContext.Provider value={{ ...user, isLoading }}>
             {children}
         </UserContext.Provider>
     );

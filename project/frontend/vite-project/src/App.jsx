@@ -8,6 +8,8 @@ import AboutPage from './pages/ContactUs/ContactUs.jsx';
 import NotFoundPage from './pages/NotFound/NotFound.jsx';
 import SiginSignup from './pages/SigninSignupPage/SigninSignupPage.jsx';
 import Query from './pages/Query_Page/query_page.jsx';
+import BusManagementForm from './pages/Bus_Page/Bus_page.jsx';
+import RouteManager from './pages/Route_Page/Route_Page.jsx';
 import { UserProvider } from './components/contexts/userContexts.jsx';
 
 const App = () => {
@@ -22,6 +24,8 @@ const App = () => {
         <Route path="/Profile" element={<ProfilePage />} />
         <Route path="/ContactUs" element={<AboutPage />} />
         <Route path="/Query" element={<Query />}/>
+        <Route path="/Routes" element={<RouteManager/>}/>
+        <Route path="/Buses" element={<BusManagementForm/>}/>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>

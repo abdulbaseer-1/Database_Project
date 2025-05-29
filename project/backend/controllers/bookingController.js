@@ -1,30 +1,88 @@
 import pool from '../database/db.js';
+import getIdFromJWT from '../middleware/getIdFromJWT.js';
 
 export default {
-  // POST /api/bookings/
-  createBooking: async (req, res, next) => {
-    try {
-      const { date, seat_number, route_id } = req.body;
-      const userId = req.user.userId; // Assuming user ID is stored in req.user
 
-      if (!date || !route_id) {
-        return res.status(400).json({ message: 'Date and route_id are required' });
-      }
+createBooking: async (req, res) => {
+  try {
+    const {
+      passengerName,
+      contactNumber,
+      departureDate,
+      departureTime,
+      departureLocation,
+      destination,
+      seatNumbers,
+    } = req.body;
 
-      const [result] = await pool.query(
-        `INSERT INTO bookings (user_id, route_id, seat_number, date) VALUES (?, ?, ?, ?)`,
-        [userId, route_id, seat_number, date]
-      );
+    // Extract user ID from JWT (Assumes a helper function `getIdFromJWT`)
+    const userId = getIdFromJWT(req);
 
-      res.status(201).json({
-        message: 'Booking created',
-        booking: { id: result.insertId, user_id: userId, route_id, seat_number, date },
-      });
-    } catch (err) {
-      console.error('Error creating booking:', err);
-      next(err);
+    // Validate if the user exists
+    const userQuery = `SELECT id FROM users WHERE id = ?`;
+    const [userResults] = await pool.query(userQuery, [userId]);
+    if (userResults.length === 0) {
+      return res.status(404).json({ message: 'User not found.' });
     }
-  },
+
+    console.log("in f(bookings):");
+    // Find Route ID
+    const routeQuery = `
+      SELECT id FROM routes 
+      WHERE _source = ? AND destination = ? AND departure_time = ?
+    `;
+    const routeParams = [departureLocation, destination, `${departureDate} ${departureTime}`];
+    const [routeResults] = await pool.query(routeQuery, routeParams);
+
+    if (routeResults.length === 0) {
+      return res.status(404).json({ message: 'Route not found.' });
+    }
+    const routeId = routeResults[0].id;
+
+    // Validate seat numbers
+    const totalSeatsQuery = `SELECT total_seats FROM buses WHERE id = (SELECT bus_id FROM routes WHERE id = ?)`;
+    const [busResults] = await pool.query(totalSeatsQuery, [routeId]);
+
+    if (busResults.length === 0) {
+      return res.status(404).json({ message: 'Bus information not found.' });
+    }
+
+    const totalSeats = busResults[0].total_seats;
+    const invalidSeats = seatNumbers.filter((seat) => seat < 1 || seat > totalSeats);
+
+    if (invalidSeats.length > 0) {
+      return res.status(400).json({ message: `Invalid seat numbers: ${invalidSeats.join(', ')}` });
+    }
+
+    // Prepare Bookings Data
+    const bookings = seatNumbers.map((seat) => [userId, routeId, seat, 'booked']);
+
+    // Check for already booked seats
+    const checkSeatQuery = `
+      SELECT seat_number FROM bookings 
+      WHERE route_id = ? AND seat_number IN (?)
+    `;
+    const [alreadyBookedSeats] = await pool.query(checkSeatQuery, [routeId, seatNumbers]);
+
+    if (alreadyBookedSeats.length > 0) {
+      const bookedSeats = alreadyBookedSeats.map((seat) => seat.seat_number).join(', ');
+      return res.status(400).json({ message: `Seats already booked: ${bookedSeats}` });
+    }
+
+    // Insert Bookings
+    const bookingQuery = `
+      INSERT INTO bookings (user_id, route_id, seat_number, status)
+      VALUES ?
+    `;
+    await pool.query(bookingQuery, [bookings]);
+
+    res.status(201).json({ message: 'Booking created successfully.' });
+  } catch (error) {
+    console.error('Error creating booking:', error.message);
+    res.status(500).json({ message: 'Internal server error.' });
+  }
+},
+
 
   // GET /api/bookings/my
   getMyBookings: async (req, res, next) => {

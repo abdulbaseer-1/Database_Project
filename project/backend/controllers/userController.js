@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 import path, { dirname } from 'path';
 import dotenv from 'dotenv';
 import pool from '../database/db.js'; // Database connection
+import getIdFromJWT from '../middleware/getIdFromJWT.js';
 
 // Utility for path management
 const __filename = fileURLToPath(import.meta.url);
@@ -59,8 +60,8 @@ const deleteUser = async (req, res) => {
 const loginUser = async (req, res) => {
     try {
         const { state, password } = req.body;
-        const searchField = state === "username" ? "name" : "email";
-        const searchValue = req.body[searchField];
+        const searchValue = req.body[state];
+        const searchField = state === "username" ? "name" : "email"; //previous error was due to the fact that i was using searchfield to get search value, but name is not used in my code, username is.(copy/paste)
 
         // Fetch the user
         const [userResult] = await pool.query(`SELECT * FROM users WHERE ${searchField} = ?`, [searchValue]);
@@ -104,31 +105,34 @@ const loginUser = async (req, res) => {
 
 const logoutUser = (req, res) => {
     
-    console.log("logout called");
-
     res.clearCookie('token');
     res.status(200).json({ message: 'Logged out successfully' });
 };
 
-const getUserRole = async (req, res) => {
+const getUserDetails = async (req, res) => {
     try {
-        console.log("in user role");
-        const userId = getUserIdFromToken(req);
+        const userId = getIdFromJWT(req);
 
-        const [userResult] = await pool.query('SELECT role FROM users WHERE id = ?', [userId]);
+        const [userResult] = await pool.query(
+            'SELECT role, name, contact FROM users WHERE id = ?', 
+            [userId]
+        );
 
         if (userResult.length === 0) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        console.log("in user role");
-        console.log("user role :" , userResult[0].role);
-        res.json({ role: userResult[0].role });
+        res.json({ 
+            role: userResult[0].role, 
+            name: userResult[0].name, 
+            contact: userResult[0].contact 
+        });
     } catch (error) {
-        console.error('Error fetching user role:', error.message);
+        console.error('Error fetching user details:', error.message);
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 
 const getProfile = async (req, res) => {
     try {
@@ -170,7 +174,7 @@ export default {
     deleteUser,
     loginUser,
     logoutUser,
-    getUserRole,
+    getUserDetails,
     getProfile,
     updateProfile,
 };

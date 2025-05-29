@@ -52,22 +52,21 @@ export default {
 
   createBus: async (req, res, next) => {
     try {
-      const { bus_name, bus_number, image_url, total_seats } = req.body;
+      const { bus_name, bus_number, total_seats } = req.body;
 
-      if (!bus_name || !bus_number || !image_url || !total_seats) {
-        return res.status(400).json({ message: 'All fields are required: bus_name, bus_number, image_url, total_seats' });
+      if (!bus_name || !bus_number || !total_seats) {
+        return res.status(400).json({ message: 'All fields are required: bus_name, bus_number, total_seats' });
       }
 
       const [result] = await pool.query(
-        'INSERT INTO buses (bus_name, bus_number, image_url, total_seats) VALUES (?, ?, ?, ?)',
-        [bus_name, bus_number, image_url, total_seats]
+        'INSERT INTO buses (bus_name, bus_number, total_seats) VALUES (?, ?, ?)',
+        [bus_name, bus_number, total_seats]
       );
 
       res.status(201).json({
         id: result.insertId,
         bus_name,
         bus_number,
-        image_url,
         total_seats,
       });
     } catch (err) {
@@ -78,15 +77,15 @@ export default {
 
   updateBus: async (req, res, next) => {
     try {
-      const { bus_name, bus_number, image_url, total_seats } = req.body;
+      const { bus_name, bus_number, total_seats } = req.body;
 
-      if (!bus_name || !bus_number || !image_url || !total_seats) {
-        return res.status(400).json({ message: 'All fields are required: bus_name, bus_number, image_url, total_seats' });
+      if (!bus_name || !bus_number || !total_seats) {
+        return res.status(400).json({ message: 'All fields are required: bus_name, bus_number, total_seats' });
       }
 
       const [result] = await pool.query(
-        'UPDATE buses SET bus_name = ?, bus_number = ?, image_url = ?, total_seats = ? WHERE id = ?',
-        [bus_name, bus_number, image_url, total_seats, req.params.id]
+        'UPDATE buses SET bus_name = ?, bus_number = ?, total_seats = ? WHERE id = ?',
+        [bus_name, bus_number, total_seats, req.params.id]
       );
 
       if (result.affectedRows === 0) {
@@ -104,6 +103,7 @@ export default {
     try {
       const [result] = await pool.query('DELETE FROM buses WHERE id = ?', [req.params.id]);
 
+      console.log("deleting");
       if (result.affectedRows === 0) {
         return res.status(404).json({ message: 'Bus not found' });
       }

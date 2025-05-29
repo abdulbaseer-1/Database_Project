@@ -5,10 +5,7 @@ import authenticateJWT from '../middleware/authenticateJWT.js';
 const router = Router();
 
 // to get user role
-router.get('/role', authenticateJWT, () => {
-    console.log("getting role");
-    userController.getUserRole;
-});
+router.get('/details', authenticateJWT, userController.getUserDetails);
 
 // Route to create a new user (registration)
 router.post('/signup', userController.createUser);
@@ -17,7 +14,7 @@ router.post('/signup', userController.createUser);
 router.post('/signin', userController.loginUser);
 
 // Route to delete the authenticated user
-router.delete('/deleteProfile', authenticateJWT, userController.deleteUser);
+router.delete('/deleteAccount', authenticateJWT, userController.deleteUser);
 
 // Route to logout the user (clear JWT token or session)
 router.post('/logout', authenticateJWT, userController.logoutUser);

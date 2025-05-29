@@ -6,7 +6,6 @@ import authenticateJWT from '../middleware/authenticateJWT.js';
 import authorizeRoles from '../middleware/authorizeRoles.js';
 
 router.get('/', busController.getAllBuses);
-router.get('/:location', busController.getBusCustom);
 router.get('/:id', busController.getBusById);
 
 router.post('/', authenticateJWT, authorizeRoles('admin'), busController.createBus);
