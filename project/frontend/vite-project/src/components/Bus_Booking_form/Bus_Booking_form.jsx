@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useBusContext } from '../contexts/bustableContext.jsx';
 import styles from './Bus_Booking_form.module.css';
 const URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -8,15 +9,27 @@ if (!URL) {
 }
 
 function BusBookingForm() {
+  const { selectedBus } = useBusContext(); // Accessing the selected bus data from context
+
   const [passengerName, setPassengerName] = useState('');
   const [contactNumber, setContactNumber] = useState('');
-  const [departureDate, setDepartureDate] = useState('');
-  const [departureTime, setDepartureTime] = useState('');
+    const [departureTime, setDepartureTime] = useState('');
   const [departureLocation, setDepartureLocation] = useState('');
   const [destination, setDestination] = useState('');
   const [seatNumber, setSeatNumber] = useState('');
+  const [busType, setBusType] = useState('');
 
   const token = localStorage.getItem('token');
+
+  useEffect(() => {
+    // Automatically populate fields when `selectedBus` changes
+    if (selectedBus) {
+      setDepartureLocation(selectedBus.startLocation || '');
+      setDestination(selectedBus.endLocation || '');
+      setDepartureTime(selectedBus.departureTime || '');
+      setBusType(selectedBus.type || 'Standard');
+    }
+  }, [selectedBus]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -34,11 +47,11 @@ function BusBookingForm() {
     const bookingDetails = {
       passengerName,
       contactNumber,
-      departureDate,
       departureTime,
       departureLocation,
       destination,
       seatNumbers: seatNumbersArray,
+      busType,
     };
 
     try {
@@ -46,7 +59,7 @@ function BusBookingForm() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization' : `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(bookingDetails),
       });
@@ -92,32 +105,11 @@ function BusBookingForm() {
           </div>
           <div className={styles.inlineGroup}>
             <div className={styles.formGroup}>
-              <label>Departure Date:</label>
-              <input
-                type="date"
-                value={departureDate}
-                onChange={(e) => setDepartureDate(e.target.value)}
-                required
-              />
-            </div>
-            <div className={styles.formGroup}>
               <label>Destination:</label>
               <input
                 type="text"
                 value={destination}
-                onChange={(e) => setDestination(e.target.value)}
-                required
-              />
-            </div>
-          </div>
-          <div className={styles.inlineGroup}>
-            <div className={styles.formGroup}>
-              <label>Departure Time:</label>
-              <input
-                type="text"
-                value={departureTime}
-                onChange={(e) => setDepartureTime(e.target.value)}
-                required
+                readOnly
               />
             </div>
             <div className={styles.formGroup}>
@@ -125,24 +117,40 @@ function BusBookingForm() {
               <input
                 type="text"
                 value={departureLocation}
-                onChange={(e) => setDepartureLocation(e.target.value)}
-                required
+                readOnly
               />
             </div>
           </div>
-          <div className={styles.inlineGroup}>  
+          <div className={styles.inlineGroup}>
+            <div className={styles.formGroup}>
+              <label>Departure:</label>
+              <input
+                type="text"
+                value={departureTime}
+                readOnly
+              />
+            </div>
+          </div>
+          <div className={styles.inlineGroup}>
             <div className={styles.formGroup}>
               <label>Seat Numbers:</label>
               <input
                 type="text"
                 value={seatNumber}
                 onChange={(e) => setSeatNumber(e.target.value)}
-                placeholder="E.g., 1, 2, 3"
                 required
               />
             </div>
+            <div className={styles.formGroup}>
+              <label>Bus Type:</label>
+              <input
+                type="text"
+                value={busType}
+                readOnly
+              />
+            </div>
           </div>
-          <button type="submit">Submit</button>
+          <button type="submit" className={styles.submitButton}>Book Seats</button>
         </form>
       </div>
     </div>

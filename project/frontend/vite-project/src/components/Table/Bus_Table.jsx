@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import table_style from "./Bus_Table.module.css";
+import table_style from './Bus_Table.module.css';
+import { useBusContext } from '../contexts/bustableContext.jsx';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+const URL = import.meta.env.VITE_BACKEND_URL;
+
+if (!URL) {
+  console.error('Environment variables:', import.meta.env);
+  throw new Error('VITE_BACKEND_URL is not defined in the environment file');
+}
 
 const Bus_Table = ({ className }) => {
   const columns = ['Bus ID', 'Start Location', 'End Location', 'Departure Time', 'Type', 'Actions'];
@@ -12,27 +19,22 @@ const Bus_Table = ({ className }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const role = localStorage.getItem('role');
+  const { setSelectedBus } = useBusContext(); // Extract context
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get('https://your-api-url.com/api/buses', {
-          headers: { 'Content-Type': 'application/json' },
+        const response = await axios.get(`${URL}/api/buses/bustable`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
         });
 
         if (response.data && Array.isArray(response.data.buses)) {
           const buses = response.data.buses;
           setData(buses);
           setFilteredData(buses);
-
-          setUniqueFilters({
-            start: [...new Set(buses.map(b => b.start_location))],
-            end: [...new Set(buses.map(b => b.end_location))],
-            time: [...new Set(buses.map(b => new Date(b.departure_time).toLocaleString()))],
-            type: [...new Set(buses.map(b => b.bus_type || 'Standard'))],
-          });
         } else {
           throw new Error('Data format is incorrect');
         }
@@ -48,27 +50,49 @@ const Bus_Table = ({ className }) => {
   }, []);
 
   useEffect(() => {
+    const fetchFilters = async () => {
+      try {
+        const response = await axios.get(`${URL}/api/buses/filters`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.data) {
+          setUniqueFilters({
+            start: response.data.startLocations,
+            end: response.data.endLocations,
+            time: response.data.departureTimes,
+            type: response.data.busTypes,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching filter data:', error);
+      }
+    };
+
+    fetchFilters();
+  }, []);
+
+  useEffect(() => {
     const filtered = data.filter(bus =>
-      (!filters.start || bus.start_location === filters.start) &&
-      (!filters.end || bus.end_location === filters.end) &&
+      (!filters.start || bus._source === filters.start) &&
+      (!filters.end || bus.destination === filters.end) &&
       (!filters.time || new Date(bus.departure_time).toLocaleString() === filters.time) &&
       (!filters.type || (bus.bus_type || 'Standard') === filters.type)
     );
     setFilteredData(filtered);
   }, [filters, data]);
 
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`https://your-api-url.com/api/buses/${id}`);
-      setData(prev => prev.filter(bus => bus._id !== id));
-    } catch (error) {
-      console.error('Error deleting bus:', error);
-      alert('Failed to delete bus.');
-    }
-  };
-
-  const handleViewDetails = (id) => {
-    navigate(`/Bus_View/${id}`);
+  const handleBooking = (bus) => {
+    setSelectedBus({
+      busId: bus.bus_id,
+      startLocation: bus._source,
+      endLocation: bus.destination,
+      departureTime: new Date(bus.departure_time).toLocaleString(),
+      type: bus.bus_type || 'Standard',
+    });
+    navigate('/BookBus'); // Navigate to the booking page
   };
 
   const handleFilterChange = (field, value) => {
@@ -148,17 +172,19 @@ const Bus_Table = ({ className }) => {
             {filteredData.map((bus, index) => (
               <tr key={bus._id || index} className={table_style.table_row}>
                 <td className={table_style.table_cell}>{bus.bus_id}</td>
-                <td className={table_style.table_cell}>{bus.start_location}</td>
-                <td className={table_style.table_cell}>{bus.end_location}</td>
+                <td className={table_style.table_cell}>{bus._source}</td>
+                <td className={table_style.table_cell}>{bus.destination}</td>
                 <td className={table_style.table_cell}>
                   {new Date(bus.departure_time).toLocaleString()}
                 </td>
                 <td className={table_style.table_cell}>{bus.bus_type || 'Standard'}</td>
                 <td className={table_style.table_cell_centered}>
-                  <button onClick={() => handleViewDetails(bus._id)} className={table_style.action_button}>View</button>
-                  {role === 'admin' && (
-                    <button onClick={() => handleDelete(bus._id)} className={table_style.action_button}>Delete</button>
-                  )}
+                  <button
+                    onClick={() => handleBooking(bus)}
+                    className={table_style.action_button}
+                  >
+                    Book Seats
+                  </button>
                 </td>
               </tr>
             ))}

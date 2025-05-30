@@ -1,4 +1,10 @@
 import React, { useState } from 'react';
+const URL = import.meta.env.VITE_BACKEND_URL;
+
+if (!URL) {
+  console.error('Environment variables:', import.meta.env);
+  throw new Error('VITE_BACKEND_URL is not defined in the environment file');
+}
 
 const SQLQueryForm = () => {
   const [sqlQuery, setSqlQuery] = useState('');
@@ -9,7 +15,7 @@ const SQLQueryForm = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/api/queryRoutes/query', {
+      const response = await fetch(`${URL}/api/queryRoutes/query`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

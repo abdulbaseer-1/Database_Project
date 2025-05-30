@@ -23,6 +23,7 @@ function authenticateJWT(req, res, next) {
     token = req.cookies.token;
   }
 
+  console.log('authenticateJWT middleware running', token);
   if (!token) {
     return res
       .status(401)

@@ -69,26 +69,36 @@ function BusManagementForm() {
   };
 
   const handleDeleteBus = async (busId) => {
-    if (!window.confirm('Are you sure you want to delete this bus?')) return;
+  if (!window.confirm('Are you sure you want to delete this bus?')) return;
 
-    try {
-      const response = await fetch(`${URL}/api/buses/${busId}`, {
-        method: 'DELETE',
-        'Authorization' : `Bearer ${token}`,
-      });
-
-      if (response.ok) {
-        alert('Bus deleted successfully!');
-        fetchBuses();
-      } else {
-        const errorData = await response.json();
-        alert(`Failed to delete bus: ${errorData.message}`);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('An error occurred. Please try again.');
+  try {
+    const token = localStorage.getItem('token'); // Retrieve token from localStorage
+    if (!token) {
+      alert('Authentication token missing. Please log in again.');
+      return;
     }
-  };
+
+    const response = await fetch(`${URL}/api/buses/${busId}`, {
+      method: 'DELETE',
+      headers: { // Correct placement of headers
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      alert('Bus deleted successfully!');
+      fetchBuses(); // Refresh the bus list after deletion
+    } else {
+      const errorData = await response.json();
+      alert(`Failed to delete bus: ${errorData.message}`);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('An error occurred. Please try again.');
+  }
+};
+
 
   const resetForm = () => {
     setBusName('');
@@ -141,15 +151,29 @@ function BusManagementForm() {
         </form>
 
         <h3>Existing Buses</h3>
-        <ul className={styles.busList}>
-          {buses.map((bus) => (
-            <li key={bus.id} className={styles.busItem}>
-              <span>{bus.bus_name} ({bus.bus_number})</span>
-              <button onClick={() => handleEditBus(bus)}>Edit</button>
-              <button onClick={() => handleDeleteBus(bus.id)}>Delete</button>
-            </li>
-          ))}
-        </ul>
+        <table className={styles.busTable}>
+          <thead>
+            <tr>
+              <th>Bus Name</th>
+              <th>Bus Number</th>
+              <th>ID</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {buses.map((bus) => (
+              <tr key={bus.id}>
+                <td>{bus.bus_name}</td>
+                <td>{bus.bus_number}</td>
+                <td>{bus.id}</td>
+                <td>
+                  <button onClick={() => handleEditBus(bus)}>Edit</button>
+                  <button onClick={() => handleDeleteBus(bus.id)}>Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

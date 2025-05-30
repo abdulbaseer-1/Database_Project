@@ -33,16 +33,18 @@ export default {
 
   createRoute: async (req, res, next) => {
     try {
-      const { source, destination, departure_time, arrival_time, bus_id } = req.body;
+      const { _source, destination, departure_time, arrival_time, bus_id } = req.body;
+
+      console.log("req.body : ", req.body);
 
       const [result] = await pool.query(`
-        INSERT INTO routes (source, destination, departure_time, arrival_time, bus_id) 
+        INSERT INTO routes (_source, destination, departure_time, arrival_time, bus_id) 
         VALUES (?, ?, ?, ?, ?)
-      `, [source, destination, departure_time, arrival_time, bus_id]);
+      `, [_source, destination, departure_time, arrival_time, bus_id]); // !! why dosent it work when the identifier is "source"
 
       res.status(201).json({
         id: result.insertId,
-        source,
+        _source,
         destination,
         departure_time,
         arrival_time,

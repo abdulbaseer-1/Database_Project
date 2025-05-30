@@ -1,0 +1,39 @@
+.table_heading {
+  font-size: 1.5em;
+  color: #00274d;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.filter_container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.filter_container select,
+.reset_button {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.95em;
+  color: #00274d;
+  background-color: #f0f8ff;
+  transition: all 0.3s ease;
+}
+
+.filter_container select:focus,
+.reset_button:hover {
+  border-color: #00274d;
+  outline: none;
+  background-color: #e6f2ff;
+}
+
+.reset_button {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Existing table styles remain same */

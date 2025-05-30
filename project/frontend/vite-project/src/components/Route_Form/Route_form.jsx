@@ -56,6 +56,7 @@ function Routes() {
       const method = editingRouteId ? 'PUT' : 'POST';
       const endpoint = editingRouteId ? `${URL}/api/routes/${editingRouteId}` : `${URL}/api/routes`;
 
+      console.log("endpoint : ", endpoint);
       const response = await fetch(endpoint, {
         method,
         headers: {
