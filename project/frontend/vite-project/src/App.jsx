@@ -19,19 +19,19 @@ const App = () => {
   <BusProvider>
   <UserProvider>
     <Router>
-      <Routes>
-        <Route path="/" element={<SiginSignup />} />
-        <Route path="/Home" element={<HomePage />} />
-        <Route path="/Bookings" element={<BookingsPage />} />
-        <Route path="/BookBus" element={<BookBus />} />
-        <Route path="/Settings" element={<SettingsPage />} />
-        <Route path="/Profile" element={<ProfilePage />} />
-        <Route path="/ContactUs" element={<AboutPage />} />
-        <Route path="/Query" element={<Query />}/>
-        <Route path="/Routes" element={<RouteManager/>}/>
-        <Route path="/Buses" element={<BusManagementForm/>}/>
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+        <Routes>
+          <Route path="/" element={<SiginSignup />} />
+          <Route path="/Home" element={<HomePage />} />
+          <Route path="/Bookings" element={<BookingsPage />} />
+          <Route path="/BookBus" element={<BookBus />} />
+          <Route path="/Settings" element={<SettingsPage />} />
+          <Route path="/Profile" element={<ProfilePage />} />
+          <Route path="/ContactUs" element={<AboutPage />} />
+          <Route path="/Query" element={<Query />}/>
+          <Route path="/Routes" element={<RouteManager/>}/>
+          <Route path="/Buses" element={<BusManagementForm/>}/>
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
     </Router>
   </UserProvider>
   </BusProvider>

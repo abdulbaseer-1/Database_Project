@@ -35,7 +35,8 @@ async function setupDatabase() {
         id INT AUTO_INCREMENT PRIMARY KEY,
         bus_name VARCHAR(255) NOT NULL,
         bus_number VARCHAR(50) UNIQUE NOT NULL,
-        total_seats INT NOT NULL
+        total_seats INT NOT NULL,
+        bus_type VARCHAR(20) NOT NULL
       ) ENGINE=InnoDB;
     `);
     console.log('Table "buses" created or already exists.');
@@ -60,7 +61,6 @@ async function setupDatabase() {
         route_id INT,
         seat_number INT NOT NULL,
         status ENUM('booked','cancelled') NOT NULL,
-        date DATE NOT NULL,
         passenger_name VARCHAR(50) NOT NULL,
         passenger_contact VARCHAR(50) NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -77,8 +77,8 @@ async function setupDatabase() {
 
     if (existingBus.length === 0) {
       await pool.query(
-        'INSERT INTO buses (bus_name, bus_number, total_seats) VALUES (?, ?, ?)',
-        ['City Express', 'EXP1234', 50]
+        'INSERT INTO buses (bus_name, bus_number, total_seats, bus_type) VALUES (?, ?, ?, ?)',
+        ['City Express', 'EXP1234', 50, "economy"]
       );
       console.log('Sample bus inserted.');
     } else {
