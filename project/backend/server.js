@@ -24,6 +24,8 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+makedb.setupDatabase();
+
 // Middleware
 app.use(cors);
 app.use(express.json());
@@ -35,7 +37,6 @@ app.use(logger);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
-makedb.setupDatabase;
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
