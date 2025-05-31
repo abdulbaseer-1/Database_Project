@@ -114,7 +114,7 @@ const getUserDetails = async (req, res) => {
         const userId = getIdFromJWT(req);
 
         const [userResult] = await pool.query(
-            'SELECT role, name, contact FROM users WHERE id = ?', 
+            'SELECT role, name, email FROM users WHERE id = ?', 
             [userId]
         );
 
@@ -125,7 +125,7 @@ const getUserDetails = async (req, res) => {
         res.json({ 
             role: userResult[0].role, 
             name: userResult[0].name, 
-            contact: userResult[0].contact 
+            email: userResult[0].email 
         });
     } catch (error) {
         console.error('Error fetching user details:', error.message);

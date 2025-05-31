@@ -5,8 +5,9 @@ dotenv.config({ path: "../config/.env" });
 
 let pool;
 
-function createPool(dbName) {
-  return mysql.createPool({
+// Create a pool and assign it globally
+function CreatePool(dbName) {
+  pool = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
@@ -15,8 +16,14 @@ function createPool(dbName) {
     connectionLimit: 10,
     queueLimit: 0,
   });
+  console.log(`Database connection pool created for database: ${dbName}`);
+  return pool;   // <-- return the pool here
 }
 
-pool = createPool(process.env.DB_NAME); // Default pool with the provided database
 
-export default{ createPool, pool };
+// Initialize the default pool with the database from .env
+CreatePool(process.env.DB_NAME);
+
+
+export default pool;
+export { CreatePool };

@@ -1,15 +1,13 @@
-import db from './db.js';
+import pool, {CreatePool} from './db.js';
 import dotenv from 'dotenv';
 
 dotenv.config({ path: "../config/.env" });
 
 
-const  createPool = db.createPool;
+const  createPool = CreatePool;
 
 async function setupDatabase() {
   try {
-    console.log("Setting up the database...");
-
     const dbName = process.env.DB_NAME;
     const rootPool = createPool(null); // Temporary pool without specifying a database
 
@@ -26,7 +24,7 @@ async function setupDatabase() {
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
         email VARCHAR(100) UNIQUE NOT NULL,
-        password VARCHAR(255) NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
         role ENUM('user', 'admin') NOT NULL DEFAULT 'user'
       ) ENGINE=InnoDB;
     `);
