@@ -13,12 +13,12 @@ function Navbar({ className }) {
     return (
         <div className={`${Navbar_style.navbar} ${className}`}>
             {role === 'user' &&<Link to="/Home">Home</Link>}
-            <Link to="/Bookings">Bookings</Link>
-            <Link to="/Settings">Settings</Link>
-            {role === 'user' &&<Link to="/ContactUs">Contact us</Link>}
-            {role === 'admin' && <Link to="/Query">Query</Link>}
+            {<Link to="/Bookings">Bookings</Link>}
             {role === 'admin' && <Link to="/Buses">Buses</Link>}
             {role === 'admin' && <Link to="/Routes">Routes</Link>}
+            {role === 'admin' && <Link to="/Query">Query</Link>}
+            {<Link to="/Settings">Settings</Link>}
+            {role === 'user' &&<Link to="/ContactUs">Contact us</Link>}
             {/* {error && <p className={Navbar_style.error}>Error: {error}</p>} */}
         </div>
     );

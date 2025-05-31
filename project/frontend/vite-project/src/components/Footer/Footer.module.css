@@ -4,7 +4,7 @@
     height: auto;
     margin: 0 auto;
     text-align: center;
-    background-color: #003a75; /* deeper shade of your brand blue */
+    background-color: #3498db; /* updated to your requested blue */
     margin-top: 5px;
 }
 
@@ -57,6 +57,7 @@
 .footer .contact_3 > a > img {
     width: 15%;
     margin-bottom: -25px;
+    transition: transform 0.3s ease;
 }
 
 .footer img:hover {

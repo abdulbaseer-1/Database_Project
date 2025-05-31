@@ -18,9 +18,6 @@ function Header({className}) {
             <Navbar className={className} />
         </div>
 
-        <div className={`${headerStyle.cart} ${className}`}>
-            <img src={Profile_pic} alt="Cart" className={`${headerStyle.Profile_icon} ${className}`} />
-        </div>
     </header>
     );
 }

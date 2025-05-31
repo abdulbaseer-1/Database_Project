@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import styles from './query_db.module.css';  // <-- import CSS module
+
 const URL = import.meta.env.VITE_BACKEND_URL;
 
 if (!URL) {
@@ -37,27 +39,27 @@ const SQLQueryForm = () => {
   };
 
   return (
-    <div className="container mx-auto mt-8">
-      <h1 className="text-2xl font-bold mb-4">SQL Query Executor</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className={styles.container}>
+      <h1 className={styles.title}>SQL Query Executor</h1>
+      <form onSubmit={handleSubmit} className={styles.form}>
         <textarea
           value={sqlQuery}
           onChange={(e) => setSqlQuery(e.target.value)}
           placeholder="Enter your SQL query here"
-          className="w-full p-2 border rounded"
+          className={styles.textarea}
           rows="5"
         />
         <button
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          className={styles.button}
         >
           Execute Query
         </button>
       </form>
-      <div className="mt-4">
-        {error && <p className="text-red-500">Error: {error}</p>}
+      <div className={styles.resultArea}>
+        {error && <p className={styles.error}>Error: {error}</p>}
         {queryResult && (
-          <pre className="bg-gray-100 p-4 rounded">{JSON.stringify(queryResult, null, 2)}</pre>
+          <pre className={styles.resultBox}>{JSON.stringify(queryResult, null, 2)}</pre>
         )}
       </div>
     </div>

@@ -124,7 +124,7 @@ function Routes() {
 
   return (
     <div className={styles.routesManagementContainer}>
-      <h2>Manage Routes</h2>
+      <h2>ROUTE MANAGEMENT</h2>
 
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.formGroup}>

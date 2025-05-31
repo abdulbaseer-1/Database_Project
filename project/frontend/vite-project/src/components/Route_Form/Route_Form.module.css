@@ -1,139 +1,121 @@
-.routeFormContainer {
-    max-width: 90%;
-    margin: 2% auto;
-    padding: 2rem;
-    background-color: #f9f9fb; /* Slightly lighter background */
-    border-radius: 0.5rem;
-    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
+/* Route_Form.module.css */
+
+.routesManagementContainer {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.routeFormContainer:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+.routesManagementContainer h2,
+.routesManagementContainer h3 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #333;
 }
 
-h2 {
-    text-align: center;
-    font-size: 1.8rem;
-    color: #004080; /* Navy blue for the heading */
-    margin-bottom: 1.5rem;
-    font-weight: bold;
-    transition: color 0.3s ease;
-}
-
-h2:hover {
-    color: #0059b3; /* Brighter navy on hover */
-}
-
-.inlineGroup {
-    display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
-    margin-bottom: 1rem;
+.form {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .formGroup {
-    flex: 1 1 45%;
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .formGroup label {
-    font-weight: bold;
-    font-size: 1rem;
-    color: #004080;
-    margin-bottom: 0.5rem;
-    transition: color 0.3s ease;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #444;
 }
 
-.formGroup label:hover {
-    color: #0059b3;
+.formGroup input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
 }
 
-.formGroup input[type="text"],
-.formGroup input[type="datetime-local"],
-.formGroup select {
-    width: 100%;
-    padding: 0.625rem;
-    border: 1px solid #ccc;
-    border-radius: 0.25rem;
-    font-size: 1rem;
-    color: #333;
-    background-color: #ffffff;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+.formGroup input:focus {
+  border-color: #007bff;
+  outline: none;
 }
 
-.formGroup input[type="text"]:focus,
-.formGroup input[type="datetime-local"]:focus,
-.formGroup select:focus {
-    border-color: #0077cc;
-    box-shadow: 0 0 5px rgba(0, 119, 204, 0.5);
-    outline: none;
+.submitButton {
+  grid-column: 1 / -1;
+  padding: 0.75rem;
+  font-size: 1.1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-button {
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
-    background-color: #0077cc;
-    color: white;
-    border: none;
-    border-radius: 0.25rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+.submitButton:hover {
+  background-color: #0056b3;
 }
 
-button:hover {
-    background-color: #005fa3;
-    transform: translateY(-2px);
+.routesTable {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
-button:focus {
-    outline: none;
-    box-shadow: 0 0 10px rgba(0, 119, 204, 0.7);
+.routesTable th,
+.routesTable td {
+  padding: 0.75rem 1rem;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  font-size: 0.95rem;
 }
 
-.tableContainer {
-    margin-top: 2rem;
-    border: 1px solid #ddd;
-    border-radius: 0.5rem;
-    overflow: hidden;
-    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+.routesTable th {
+  background-color: #f1f1f1;
+  color: #333;
+  font-weight: 600;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
+.routesTable tr:hover {
+  background-color: #f9f9f9;
 }
 
-table th,
-table td {
-    text-align: left;
-    padding: 0.75rem;
-    border-bottom: 1px solid #ddd;
+.editButton,
+.deleteButton {
+  padding: 0.4rem 0.8rem;
+  margin: 0 0.25rem;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-table th {
-    background-color: #f2f4f8;
-    color: #004080;
-    font-weight: bold;
+.editButton {
+  background-color: #ffc107;
+  color: #fff;
 }
 
-table tr:hover {
-    background-color: #f9f9fb;
+.editButton:hover {
+  background-color: #e0a800;
 }
 
-@media (max-width: 768px) {
-    .inlineGroup {
-        flex-direction: column;
-    }
+.deleteButton {
+  background-color: #dc3545;
+  color: #fff;
+}
 
-    .formGroup {
-        flex: 1 1 100%;
-    }
-
-    button {
-        font-size: 0.9rem;
-    }
+.deleteButton:hover {
+  background-color: #c82333;
 }

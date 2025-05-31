@@ -1,73 +1,58 @@
 .navbar {
-    display: flex;
-    gap: 8px;
-    padding: 6px;
-  }
-  
-  .navbar a {
-    color: rgba(255, 255, 255, 0.95);
-    text-decoration: none;
-    padding: 12px 28px;
-    font-size: 1.5vw;
-    font-weight: 500;
-    letter-spacing: 0.6px;
-    border-radius: 20px;
-    transition: all 0.3s ease;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    position: relative;
-  }
-  
-  .navbar a::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.1);
-    transform: translateY(100%);
-    transition: transform 0.3s ease;
-    border-radius: 20px;
-  }
-  
-  .navbar a:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: translateY(-1px);
-  }
-  
-  .navbar a:hover::before {
-    transform: translateY(0);
-  }
-  
-  @media (max-width: 768px) {
-    .navbar {
-      align-items: center;
-      gap: 0px;
-      padding: 4px;
-    }
-  
-    .navbar a {
-      width: 100%;
-      text-align: center;
-      padding: 2% 1%;
-      font-size: 3vw;
-  
-    }
-  }
-  /* Add these to your navbar styles */
+  display: flex;
+  gap: 8px;
+  padding: 6px;
+  align-items: center;
+  color: white;
+  font-size: 16px;
+}
+
+.navbar a {
+  color: rgba(255, 255, 255, 0.95);
+  text-decoration: none;
+  padding: 12px 28px;
+  font-size: 1.5vw;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  border-radius: 20px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  position: relative;
+  transition: background-color 0.3s ease, transform 0.25s ease, box-shadow 0.3s ease;
+}
+
+/* Elegant glow and scale on hover */
+.navbar a:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+  transform: scale(1.05);
+  color: #fff; /* Ensure text stays white */
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
+.navbar a::before {
+  content: none; /* no extra pseudo-element */
+}
+
+@media (max-width: 768px) {
   .navbar {
-    display: flex;
-    gap: inherit; /* Inherits gap from navbarContainer */
     align-items: center;
-    color: white;
-    font-size: 16px;
+    gap: 0;
+    padding: 4px;
   }
-  
-  @media screen and (max-width: 480px) {
-    .navbar {
-      font-size: 14px;
-    }
-    .navbar a {
-      font-size: 4vw;
-    }
+
+  .navbar a {
+    width: 100%;
+    text-align: center;
+    padding: 2% 1%;
+    font-size: 3vw;
   }
+}
+
+@media screen and (max-width: 480px) {
+  .navbar {
+    font-size: 14px;
+  }
+  .navbar a {
+    font-size: 4vw;
+  }
+}

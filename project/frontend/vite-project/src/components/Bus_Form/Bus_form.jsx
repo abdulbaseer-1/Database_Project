@@ -121,7 +121,7 @@ function BusManagementForm() {
   return (
     <div className={styles.content_area}>
       <div className={styles.busManagementContainer}>
-        <h2>Bus Management</h2>
+        <h2>BUS MANAGEMENT</h2>
         <form onSubmit={handleAddOrUpdateBus}>
           <div className={styles.formGroup}>
             <label>Bus Name:</label>

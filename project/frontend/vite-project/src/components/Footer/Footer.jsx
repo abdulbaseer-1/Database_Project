@@ -6,10 +6,12 @@ function Footer({className}) {
             <div className={footer_style.to_center}>
                 <div className={footer_style.contact_grid}>
                     <div className={footer_style.website_summary}>
-                        <h5>&copy; {new Date().getFullYear()} Crime Report. All rights reserved.</h5><br/>
-                        <p>Crime Report is dedicated to fostering a safer community by enabling individuals to report incidents securely and anonymously. 
-                        Please ensure all reports are truthful and accurate. False reporting is a serious offense and may have legal consequences.</p>
-                    </div>
+                       <h5>&copy; {new Date().getFullYear()} Bus Management System. All rights reserved.</h5><br />
+<p>
+  The Bus Management System is committed to delivering a seamless, reliable, and user-friendly platform for bus ticket booking, schedule tracking, and route management. 
+  Please ensure all booking details are accurate. Misuse of the system may lead to suspension or legal action in accordance with our terms of service.
+</p>
+ </div>
                     <div className={footer_style.contact_1}>
                         <a href="https://github.com/abdulbaseer-1" target="_blank"><img src={github_logo} alt="instagram"/> <p>Abdul Baseer</p></a>
                     </div>
