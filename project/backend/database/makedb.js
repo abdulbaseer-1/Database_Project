@@ -10,7 +10,7 @@ async function setupDatabase() {
   try {
     console.log("Setting up the database...");
 
-    const dbName = 'bus_management_system';
+    const dbName = process.env.DB_NAME;
     const rootPool = createPool(null); // Temporary pool without specifying a database
 
     // 1. Create the database if it doesn't exist
