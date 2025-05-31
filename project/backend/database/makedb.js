@@ -1,4 +1,9 @@
 import db from './db.js';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: "../config/.env" });
+
+
 const  createPool = db.createPool;
 
 async function setupDatabase() {
