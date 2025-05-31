@@ -13,6 +13,7 @@ function BusManagementForm() {
   const [busNumber, setBusNumber] = useState('');
   const [totalSeats, setTotalSeats] = useState('');
   const [selectedBusId, setSelectedBusId] = useState(null);
+  const [bus_type, setType] = useState('');
 
   const token = localStorage.getItem('token'); // authorization token , what is local storage ?
 
@@ -37,6 +38,7 @@ function BusManagementForm() {
       bus_name: busName,
       bus_number: busNumber,
       total_seats: parseInt(totalSeats, 10),
+      bus_type: bus_type,
     };
 
     try {
@@ -104,6 +106,7 @@ function BusManagementForm() {
     setBusName('');
     setBusNumber('');
     setTotalSeats('');
+    setType('');
     setSelectedBusId(null);
   };
 
@@ -111,6 +114,7 @@ function BusManagementForm() {
     setBusName(bus.bus_name);
     setBusNumber(bus.bus_number);
     setTotalSeats(bus.total_seats);
+    setType(bus.bus_type);
     setSelectedBusId(bus.id);
   };
 
@@ -143,6 +147,15 @@ function BusManagementForm() {
               type="number"
               value={totalSeats}
               onChange={(e) => setTotalSeats(e.target.value)}
+              required
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label>Bus Type:</label>
+            <input
+              type="text"
+              value={bus_type}
+              onChange={(e) => setType(e.target.value)}
               required
             />
           </div>
