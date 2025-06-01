@@ -45,10 +45,6 @@ export default {
       const routeParams = [departureLocation, destination, formattedDepartureDatetime];
       const [routeResults] = await pool.query(routeQuery, routeParams);
 
-      console.log("at line : 38, departure time", formattedDepartureDatetime);
-      console.log("at line : 38, route results", routeResults);
-      console.log("at line : 38, route results", routeQuery + routeParams);
-
       if (routeResults.length === 0) {
         return res.status(404).json({ message: 'Route not found.' });
       }
@@ -108,6 +104,38 @@ export default {
   },
 
 
+  // GET : /api/bookings/
+  getAllBookings: async (req, res, next) => {
+    try {
+
+      console.log('inside get all bookings');
+      // Query to join bookings and routes tables
+      const [bookings] = await pool.query(`
+        SELECT 
+          bookings.id,
+          bookings.user_id,
+          routes._source,
+          routes.destination,
+          routes.departure_time,
+          bookings.seat_number,
+          bookings.passenger_name
+        FROM bookings
+        INNER JOIN routes ON bookings.route_id = routes.id
+        ORDER BY bookings.seat_number DESC
+      `);
+
+      // Check if bookings exist for the user
+      if (!bookings || bookings.length === 0) {
+        return res.status(404).json({ message: 'No bookings found' });
+      }
+
+      // Respond with the booking details
+      res.json({ bookings });
+    } catch (err) {
+      console.error('Error fetching bookings:', err.message);
+      next(err); // Pass error to the error-handling middleware
+    }
+  },
 
   // GET /api/bookings/my
   getMyBookings: async (req, res, next) => {
@@ -141,6 +169,27 @@ export default {
       // Respond with the booking details
       res.json({ bookings });
     } catch (err) {
+      console.error('Error fetching bookings:', err.message);
+      next(err); // Pass error to the error-handling middleware
+    }
+  },
+
+  getBookingFilters: async (req, res, next) => {
+  // to get data for drp options in bus booking form
+  try {
+    const [_source] = await pool.query('SELECT DISTINCT _source FROM routes');
+    const [destination] = await pool.query('SELECT DISTINCT destination FROM routes');
+    const [departure_time] = await pool.query('SELECT DISTINCT departure_time FROM routes');
+    const [user_id] = await pool.query('SELECT DISTINCT user_id FROM bookings');
+    const [passenger_name] = await pool.query('SELECT DISTINCT passenger_name FROM bookings');
+
+    res.json({
+      _source: _source.map(row => row._source), // map is just to copy one valid data to an array
+      destination: destination.map(row => row.destination),
+      departure_time: departure_time.map(row => new Date(row.departure_time).toLocaleString()),
+      user_id: user_id.map(row => row.user_id),
+      passenger_name: passenger_name.map(row => row.passenger_name),
+    })} catch (err) {
       console.error('Error fetching bookings:', err.message);
       next(err); // Pass error to the error-handling middleware
     }

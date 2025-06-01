@@ -65,8 +65,6 @@ export default {
   },
 
   getFilteredData : async (req, res) => { // to get data for drp options in bus booking form
-
-  console.log("inside get fitered data");
   try {
     const [startLocations] = await pool.query('SELECT DISTINCT _source FROM routes');
     const [endLocations] = await pool.query('SELECT DISTINCT destination FROM routes');
