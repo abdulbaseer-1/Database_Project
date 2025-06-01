@@ -12,7 +12,7 @@ function Navbar({ className }) {
 
     return (
         <div className={`${Navbar_style.navbar} ${className}`}>
-            {role === 'user' &&<Link to="/Home">Home</Link>}
+            {role === 'user' && <Link to="/Home">Home</Link>}
             {<Link to="/Bookings">Bookings</Link>}
             {role === 'admin' && <Link to="/Buses">Buses</Link>}
             {role === 'admin' && <Link to="/Routes">Routes</Link>}

@@ -80,7 +80,7 @@ function ContactUs() {
         <div className={FormStyle.contact}>
           <img src={student2} alt="Mudasir Khan" />
           <h5>Meet: Mudasir Khan</h5>
-          <p>Software engineering enthusiast with expertise in backend systems.</p>
+          <p>Passionate about UI/UX design and frontend development. </p>
           <a href="https://github.com/Mudasirkhan975" target="_blank" rel="noreferrer">
             <img src={github_logo} alt="GitHub" />
           </a>
@@ -90,7 +90,7 @@ function ContactUs() {
         <div className={FormStyle.contact}>
           <img src={student3} alt="Muhammad Mohsin" />
           <h5>Meet: Muhammad Mohsin</h5>
-          <p>Passionate about UI/UX design and frontend development.</p>
+          <p>Software engineering enthusiast with expertise in backend systems.</p>
           <a href="https://github.com/mohsinakabilsins" target="_blank" rel="noreferrer">
             <img src={github_logo} alt="GitHub" />
           </a>
